@@ -1,0 +1,38 @@
+.form-check {
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: center;
+    /* justify-content: center; */
+    width: 60px !important;
+    padding-left: 0;
+}
+
+body{
+    background-image: url("../img/key.png");
+    background-repeat: no-repeat;
+    background-size: 20%; /* Resize the background image to cover the entire container */
+    height: 100vh;
+    background-position: bottom right;
+}
+
+.card-frame{
+    justify-content: space-between;
+    flex-direction: column;
+    height: 750px !important;
+    display: flex;
+}
+.card-frame .nextButton{
+    justify-content: flex-end;
+    display: flex;
+}
+.card-frame .nextButton span{
+    width: 100%;
+    text-align: center;
+}
+
+.wallet{
+    max-height: 400px;
+    height: 400px;
+    overflow: scroll;
+    overflow-x: hidden;
+}

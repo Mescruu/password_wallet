@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7efa11f9-d120-4ca4-aadc-cd31d3f4a2ac" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1iXcDGmq6mcWWV2kt8op5neeoFd" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Programy\XAMPP\htdocs\freeline" />
+    </key>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7efa11f9-d120-4ca4-aadc-cd31d3f4a2ac" name="Default Changelist" comment="" />
+      <created>1565174951318</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1565174951318</updated>
+      <workItem from="1565174952412" duration="13984000" />
+      <workItem from="1565258755327" duration="23448000" />
+      <workItem from="1565383315421" duration="8394000" />
+      <workItem from="1565543197315" duration="349000" />
+      <workItem from="1576868907646" duration="4521000" />
+      <workItem from="1578859359494" duration="2303000" />
+      <workItem from="1602057294407" duration="14147000" />
+      <workItem from="1602094526121" duration="8946000" />
+      <workItem from="1602103568761" duration="93000" />
+      <workItem from="1602148058813" duration="17439000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="284" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1602159219927">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="284" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1602159219927" />
+    <state x="690" y="267" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1602151537893">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="267" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1602151537893" />
+    <state x="727" y="335" key="NewPhpClassDialog" timestamp="1602158864184">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="727" y="335" key="NewPhpClassDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1602158864184" />
+    <state x="794" y="444" key="NewPhpFileDialog" timestamp="1602160543095">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="794" y="444" key="NewPhpFileDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1602160543095" />
+    <state x="681" y="261" width="540" height="524" key="StructurePopup" timestamp="1602084924731">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="681" y="261" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1602084924731" />
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1602103569492">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1602103569492" />
+    <state x="606" y="135" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1602151285937">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="606" y="135" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1602151285937" />
+    <state x="616" y="240" key="run.anything.popup" timestamp="1602158246278">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1602158246278" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1602097465760">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1602097465760" />
+  </component>
+</project>
