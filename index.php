@@ -15,7 +15,7 @@ $errors = [  //zmienna przechowująca błędy
     "hashType" => "",
 ];
 
-$loginbox=false; //zmienna odpowiadająca za wyświetlanie odpowiedniego boxa
+$loginbox=true; //zmienna odpowiadająca za wyświetlanie odpowiedniego boxa
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if($user==null){
                 $loginError="Nie ma takiego użytkownika!";
             }else{
-                $user->showUserInfo();
+               // $user->showUserInfo();
 
                // echo "<hr> hash type ".$hashType;
 
@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }else{
                     $hash=0;
                 }
-                $errors['login']=$db->login($login, $password, $hash);
+                $errors['password']=$db->login($login, $password, $hash)."<br><hr>";
             }
         }
 
@@ -128,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }else{
                     $hash=false;
                 }
-                $db->registerUser($login, $password, $hash);
+                $db->registerUser($login, $password, $hash, true); //true - oznacza pierwsze rejestrowanie użytkownika / false zmiana hasła
             }
         }
        else{
@@ -168,7 +168,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 <main>
-
+<h1 class="text-center p-5">
+    Welcome to the Password Wallet!
+</h1>
+    <hr>
 <div class="container p-1 w-50">
     <?php if(isset($_SESSION['info'])) echo '<h3 class="text-center text-dark alert-warning p-3">'.$_SESSION['info']."</h3>"; //wyświetlenie błedu?>
 
@@ -183,7 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ?>
 " data-interval="false" id="loginBox">
                 <h1 class="p-5 text-center">Login</h1>
-                <div class ="card-frame">
+                <div class ="card-frame-index">
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 class="card-title">Login</h5>
@@ -242,7 +245,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             " data-interval="false">
                 <h1 class="p-5 text-center">Register</h1>
 
-                <div class ="card-frame">
+                <div class ="card-frame-index">
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 class="card-title">Register</h5>

@@ -4,7 +4,6 @@ include_once('user.php');
 include_once("config.php");
 
 class BD {
-    //const pepper = "6883589765f7e08e226dff0.01019947";
 
     public $mysqli;
     public function __construct($serwer,$user,$pass,$baza) { //utworzenie bazy danych
@@ -40,10 +39,14 @@ class BD {
     }
     public  function  createPartition($login, $password, $description, $web_address, $user_Id){
 
-        $user_password = $_SESSION['password'];
+        $key = $_SESSION['password'];
+        //$ivlen = openssl_cipher_iv_length(constant('cypherMethod')); //Pobiera długość wektora inicjalizacji szyfru (iv).
+       // $iv = openssl_random_pseudo_bytes($ivlen); //Generuje ciąg pseudolosowych bajtów, z liczbą bajtów określoną przez lengthparametr.
+
+        $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), $key, $options=0);
 
         //wywołanie funkcji wprowadzającej do bazy
-        $insert_sql = 'INSERT INTO `password` (`id`, `password`, `id_user`, `web_address`, `description`,`login`) VALUES (NULL, "'.$password.'", "'.$user_Id.'", "'.$web_address.'", "'.$description.'", "'.$login.'");';
+        $insert_sql = 'INSERT INTO `password` (`id`, `password`, `id_user`, `web_address`, `description`,`login`) VALUES (NULL, "'.$encryptedPassword.'", "'.$user_Id.'", "'.$web_address.'", "'.$description.'", "'.$login.'");';
         $this->insert($insert_sql);
 
         return "Position added";
@@ -79,6 +82,32 @@ class BD {
 
     }
 
+    public  function decryptPassword($id){
+
+        $sql= "select password from password where id='$id'";
+
+      //  $ivlen = openssl_cipher_iv_length(constant('cypherMethod')); //Pobiera długość wektora inicjalizacji szyfru (iv).
+       // $iv = openssl_random_pseudo_bytes($ivlen); //Generuje ciąg pseudolosowych bajtów, z liczbą bajtów określoną przez lengthparametr.
+
+
+
+        $result = $this->mysqli->query($sql);
+
+        if ($result->num_rows > 0) {
+            // output data of each row
+            while($row = $result->fetch_assoc()) {
+               $password= $row["password"];
+            }
+        } else {
+            return null;
+        }
+        $key = $_SESSION['password'];
+
+        $decrypted = @openssl_decrypt($password, constant('cypherMethod'), $key, $options=0);
+
+        return $decrypted;
+    }
+
 
     /* funkcja select
     public  function select($sql){
@@ -99,17 +128,16 @@ class BD {
 
     public  function login($login, $password, $keptAsHash){
 
-
         $user=$this->getUser($login);
 
         if($user!=null){
             if($keptAsHash==1)
             {
-               @$loginPasswordHas = $this->hashPassword($password.$user->getSalt().constant(pepper)); //dołączenie stałej pepper z pliku config.
+               @$loginPasswordHas = $this->hashPassword($password.$user->getSalt().constant('pepper')); //dołączenie stałej pepper z pliku config.
 
             }
             else{
-                @$loginPasswordHas = $this->HMACPassword($password,$user->getSalt().constant(pepper));
+                @$loginPasswordHas = $this->HMACPassword($password,$user->getSalt().constant('pepper'));
                 //  $passwordHash = $this->HMACPassword($password.$salt.BD::pepper); //pepper jako stała, która wcześniej była zadeklarowana jako //const pepper = "6883589765f7e08e226dff0.01019947";.
             }
 
@@ -124,15 +152,14 @@ class BD {
 
 
             }else{
-                return "Hasło niepoprawne";
+                return "Wrong password or hash type";
             }
         }else{
-            return "Nie ma takiego użytkownika!";
+            return "There is no user with that login!";
         }
     }
 
-    public  function registerUser($login, $password, $keptAsHash){
-
+    public  function registerUser($login, $password, $keptAsHash, $register){ //funkcja umożliwiająca tworzenie/edycję użytkownika
 
         //tworzenie soli
         $salt = substr(uniqid(mt_rand(), false), 0, 20); //utworzenie w funkcji uniqid ciągu 23 znaków, a następnie odcięcie 3 ostatnich (w bazie maksymalna długość soli to 20.
@@ -150,22 +177,28 @@ class BD {
 
         if($keptAsHash)
         { //jeżeli jest kodowane SHA512
-            @$passwordHash = $this->hashPassword($password.$salt.constant(pepper)); //dołączenie stałej pepper z pliku config.
+            @$passwordHash = $this->hashPassword($password.$salt.constant('pepper')); //dołączenie stałej pepper z pliku config.
         }
         else{ //jeżeli jest kodowane MHAC
-            @$passwordHash = $this->HMACPassword($password, $salt.constant(pepper));
+            @$passwordHash = $this->HMACPassword($password, $salt.constant('pepper')); //polaczenie soli i pieprzu do funkcji hash_hmac
             //  $passwordHash = $this->HMACPassword($password.$salt.BD::pepper); //pepper jako stała, która wcześniej była zadeklarowana jako //const pepper = "6883589765f7e08e226dff0.01019947";.
         }
-
-        //wywołanie funkcji wprowadzającej do bazy
-        $insert_sql = 'INSERT INTO `user` (`id`, `login`, `password_hash`, `salt`, `isPasswordKeptAsHash`) VALUES (NULL, "'.$login.'", "'.$passwordHash.'", "'.$salt.'", "'.$keptAsHash.'");';
-        $this->insert($insert_sql);
-
         $_SESSION['login'] = $login;
-        $_SESSION['info'] = "You are now logged in";
         $_SESSION['password'] = $password;
 
-        header('location: password_wallet.php'); //przeniesienie na odpowiednią stronę
+        //wywołanie funkcji wprowadzającej do bazy
+        if($register){
+            $insert_sql = 'INSERT INTO `user` (`id`, `login`, `password_hash`, `salt`, `isPasswordKeptAsHash`) VALUES (NULL, "'.$login.'", "'.$passwordHash.'", "'.$salt.'", "'.$keptAsHash.'");';
+            $this->insert($insert_sql);
+
+            $_SESSION['info'] = "You are now logged in";
+            header('location: password_wallet.php'); //przeniesienie na odpowiednią stronę
+        }else{
+            $update_sql = 'UPDATE USER SET `password_hash` = "'.$passwordHash.'", `salt` = "'.$salt.'", `isPasswordKeptAsHash` = "'.$keptAsHash.'" WHERE CustomerID = "'.$login.'");';
+            $this->insert($update_sql);
+
+            $_SESSION['info'] = "Your password has changed";
+        }
     }
 /*     inna opcja hashu
        public  function hashPassword($password){
@@ -180,7 +213,7 @@ class BD {
         return $hashPassword;
     }
 
-    public  function HMACPassword($password, $salt){
+    public  function HMACPassword($password, $salt){ //polaczenie soli i pieprzu do funkcji hash_hmac
 
         /* dokumentacja
             1.algo
@@ -198,6 +231,10 @@ class BD {
 
         $hashPassword =  hash_hmac('sha512', $password, $salt); //
         return $hashPassword;
+    }
+
+    public  function resetPassword(){
+
     }
 
     public function insert($sql) { //funkcja insert

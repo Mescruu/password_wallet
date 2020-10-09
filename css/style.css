@@ -15,24 +15,43 @@ body{
     background-position: bottom right;
 }
 
-.card-frame{
+.card-frame-index{
     justify-content: space-between;
     flex-direction: column;
-    height: 750px !important;
+    height: 700px !important;
     display: flex;
 }
+
+.card-frame-password_wallet{
+    justify-content: space-between;
+    flex-direction: column;
+    height: 850px !important;
+    display: flex;
+}
+
 .card-frame .nextButton{
     justify-content: flex-end;
     display: flex;
 }
+
+
+
 .card-frame .nextButton span{
     width: 100%;
     text-align: center;
 }
 
 .wallet{
-    max-height: 400px;
-    height: 400px;
+    max-height: 500px;
+    height: 500px;
     overflow: scroll;
     overflow-x: hidden;
 }
+
+.partition-title{
+    text-align: center; !important;
+    font-size: 18px; !important;
+    color: white; !important;
+    font-weight: bold; !important;
+}
+

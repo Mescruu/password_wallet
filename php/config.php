@@ -9,3 +9,4 @@ $db = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 $db = new BD("localhost", "root", "", "password_wallet");
 
 define('pepper', '6883589765f7e08e226dff0x01019947');
+define('cypherMethod', 'AES-256-CBC');
