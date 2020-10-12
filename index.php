@@ -1,96 +1,85 @@
 <?php
-session_start();
+session_start();// start the session
 
+include_once('php/BD.php');// database class
+include_once ('php/config.php');// database configuration file;
+include_once ('php/commonFunction.php');// file with functions used in index.php and password_wallet.php
 
-include_once('php/BD.php');
-include_once ('php/config.php');//plik konfiguracyjny do bazy danych;
-include_once ('php/commonFunction.php');//plik z typowymi funkcjami
-
+// create variables with no initial value
 $password = $login = $hashType= $repeatPassword =  "";
 
-$errors = [  //zmienna przechowująca błędy
+$db = create_DB();//create db handler
+
+$errors = [  // an array with errors
     "login" => "",
     "password" => "",
     "repeatPassword" => "",
     "hashType" => "",
 ];
 
-$loginbox=true; //zmienna odpowiadająca za wyświetlanie odpowiedniego boxa
+$loginbox=true; // variable responsible for displaying the appropriate box
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
 
-    if (isset($_REQUEST["Login"]))
+    if (isset($_REQUEST["Login"]))  // request to login to the wallet
     {
 
-        if (empty($_POST["login"])) {
+        if (empty($_POST["login"])) { // check if the given "login" is empty. If true, write the appropriate error. If false, save the variable login
             $login = "";
             $errors['login'] = "Login is required";
         } else {
             $login = test_input($_POST["login"]);
         }
 
-        if (empty($_POST["password"])) {
+        if (empty($_POST["password"])) { //similar to the comment above
             $password = "";
             $errors['$password']  = "Password is required";
         } else {
             $password = test_input($_POST["password"]);
         }
 
-        if (empty($_POST["hashType"])) {
+        if (empty($_POST["hashType"])) { //similar to the comment above
             $hashType = "";
             $errors['$hashType'] = "Hash type is required";
         } else {
             $hashType = test_input($_POST["hashType"]);
         }
 
-
-        //echo $login;
-        //echo $password;
-       // echo $loginbox;
         $loginbox=true;
-        //echo $bd->select($typ, $gdzie, $poziom); //pobieranie danych z bazy danych
 
-
-        if (nonerror($errors)) { //jeżeli nie ma zadnego błedu jeżeli elementy są puste
-
-            $user=$db->getUser($login);
-            if($user==null){
-                $loginError="Nie ma takiego użytkownika!";
+        if (nonerror($errors)) { // if there is no errors
+            $user=$db->getUser($login);  //create an user with that login
+            if($user==null){ // if there is no user in database with that data
+                $loginError= "Error - There is no user with this login";
             }else{
-               // $user->showUserInfo();
-
-               // echo "<hr> hash type ".$hashType;
-
-                if($hashType=="SHA512"){
+                if($hashType=="SHA512"){ //set hash type
                     $hash=1;
                 }else{
                     $hash=0;
                 }
-                $errors['password']=$db->login($login, $password, $hash)."<br><hr>";
+                $errors['password']=$db->login($login, $password, $hash)."<br><hr>"; //call login function
             }
         }
-
-
     }
 
-    if (isset($_REQUEST["Register"])) {
-        $loginbox=false;
+    if (isset($_REQUEST["Register"])) { // request to register user to the wallet
+        $loginbox=false; //display box with register form
 
-        if (empty($_POST["login"])) {
+        if (empty($_POST["login"])) { // check if the given "login" is empty. If true, write the appropriate error. If false, save the variable login
             $login = "";
             $errors['login'] = "Login is required";
         } else {
             $login = test_input($_POST["login"]);
         }
 
-        if (empty($_POST["password"])) {
+        if (empty($_POST["password"])) { //similar to the comment above
             $password = "";
             $errors['$password'] = "Login is required";
         } else {
             $password = test_input($_POST["password"]);
         }
 
-        if (empty($_POST["repeatPassword"])) {
+        if (empty($_POST["repeatPassword"])) {  //similar to the comment above
             $repeatPassword = "";
             $errors['repeatPassword'] = "Login is required";
         } else {
@@ -98,37 +87,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
 
-        if (empty($_POST["hashType"])) {
+        if (empty($_POST["hashType"])) { //similar to the comment above
             $hashType = "";
             $errors['hashType'] = "Hash type is required";
         } else {
             $hashType = test_input($_POST["hashType"]);
         }
 
-        if($repeatPassword!=$password){
+        if($repeatPassword!=$password){  //check if given passwords are the same
             $errors['repeatPassword']  = "The passwords aren't the same";
         }
 
-        //echo $login;
-        //echo $password;
-        //echo $repeatPassword;
-        //echo $hashType;
-
-        $loginbox=false;
-
-        if (nonerror($errors)) { //jeżeli nie ma zadnego błedu jeżeli elementy są puste
-            $user=$db->getUser($login); //sprawdzamy czy istnieje uer o takim loginie
+        if (nonerror($errors)) {  //if there is no errors
+            $user=$db->getUser($login); //check if there is an user with that login
             if($user!=null){
-                $errors['login']="login jest zajęty!";
-                //$user->showUserInfo();
-
+                $errors['login']="There is user with this login. User another one!";
             }else{
-                if($hashType=="SHA512"){
+                if($hashType=="SHA512"){  //set hash type
                     $hash=true;
                 }else{
                     $hash=false;
                 }
-                $db->registerUser($login, $password, $hash, true); //true - oznacza pierwsze rejestrowanie użytkownika / false zmiana hasła
+                $db->registerUser($login, $password, $hash, true);// true - means user registration / false - password change
             }
         }
        else{
@@ -173,18 +153,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </h1>
     <hr>
 <div class="container p-1 w-50">
-    <?php if(isset($_SESSION['info'])) echo '<h3 class="text-center text-dark alert-warning p-3">'.$_SESSION['info']."</h3>"; //wyświetlenie błedu?>
+    <?php if(isset($_SESSION['info'])) echo '<h3 class="text-center text-dark alert-warning p-3">'.$_SESSION['info']."</h3>"; //display errors?>
 
     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="false">
 
         <div class="carousel-inner" data-interval="false">
             <div class="carousel-item
             <?php
-            if($loginbox){
+            if($loginbox)
                 echo "active";
-            }
             ?>
-" data-interval="false" id="loginBox">
+        " data-interval="false" id="loginBox">
                 <h1 class="p-5 text-center">Login</h1>
                 <div class ="card-frame-index">
                 <div class="card text-center">
@@ -197,9 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="form-group">
                                 <?php
                                 if($errors['login']!=="")
-                                {
                                     echo '<span class="text-danger">'.$errors['login']."</span>";
-                                }
                                 ?>
                                 <label for="login">Login</label>
                                 <input type="text" class="form-control" name="login" id="login" aria-describedby="Login" placeholder="Enter login">
@@ -207,9 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="form-group">
                                 <?php
                                 if($errors['password']!=="")
-                                {
                                     echo '<span class="text-danger">'. $errors['password']."</span>";
-                                }
                                 ?>
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" name="password" id="password" aria-describedby="password" placeholder="Enter password">
@@ -238,9 +213,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div class="carousel-item
             <?php
-            if(!$loginbox) {
+            if(!$loginbox)
                 echo "active";
-            }
             ?>
             " data-interval="false">
                 <h1 class="p-5 text-center">Register</h1>
@@ -257,9 +231,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="form-group">
                                 <?php
                                 if($errors['login']!=="")
-                                {
                                     echo '<span class="text-danger">'.$errors['login']."<br></span>";
-                                }
                                 ?>
                                 <label for="login">Login</label>
                                 <input type="text" class="form-control" name="login" id="login" aria-describedby="Login" placeholder="Enter login">
@@ -267,9 +239,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="form-group">
                                 <?php
                                 if($errors['password']!=="")
-                                {
                                     echo '<span class="text-danger">'. $errors['password']."<br></span>";
-                                }
                                 ?>
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" name="password" id="password" aria-describedby="password" placeholder="Enter password">
@@ -277,9 +247,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="form-group">
                                 <?php
                                 if($errors['repeatPassword']!=="")
-                                {
                                     echo '<span class="text-danger">'. $errors['repeatPassword']."<br></span>";
-                                }
                                 ?>
                                 <label for="repeatPassword">Password</label>
                                 <input type="password" class="form-control" name="repeatPassword" id="repeatPassword" aria-describedby="repeatPassword" placeholder="Enter password again">
@@ -298,22 +266,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     </div>
                 </div>
-
                 <div class="text-center p-5">
                     <a class="btn w-50 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="next"">
                     <span class="" id="text">Login &#8594;</span>
                     </a>
                 </div>
-
                 </div>
-
             </div>
         </div>
-
     </div>
-
 </div>
-
 </main>
 </body>
 </html>
