@@ -1,19 +1,18 @@
 <?php
-function nonerror($array) {
-
+function nonerror($array) { //function which checks if there are errors in given array
     $allclear = 1;
     foreach($array as $item) {
-        if($item!="") { $allclear = 0; break;}//jezeli jest bład ustaw na 0 i przerwij pętle
+        if($item!="") { $allclear = 0; break;}// if there is an error set to 0 and break the loop
     }
 
-    if($allclear==1) { return true; } //brak błędów
-    else { return false; } //są błędy
+    if($allclear==1) { return true; } // no errors
+    else { return false; } // there are errors
 }
 
 function test_input($data)
 {
-    $data = trim($data); //usuwa niepotrzebne spacje
-    $data = stripslashes($data); //usuwa sleshe
-    $data = htmlspecialchars($data); //usuwa znaki specjalne html
+    $data = trim($data); // remove unnecessary spaces
+    $data = stripslashes($data); // remove slashes
+    $data = htmlspecialchars($data); // remove special html characters
     return $data;
 }
