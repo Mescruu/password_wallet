@@ -9,6 +9,7 @@ class user
     private $salt;
     private $isPasswordKeptAsHash;
 
+    //
     public function __construct($id, $login, $password_hash, $salt, $isPasswordKeptAsHash)
     {
         $this->id = $id;
@@ -18,6 +19,8 @@ class user
         $this->isPasswordKeptAsHash = $isPasswordKeptAsHash;
 
     } // end __construct();
+
+    //functions which return private value of object
 
     public function getId(){
         return $this->id;
@@ -35,6 +38,8 @@ class user
     {
         return $this->isPasswordKeptAsHash;
     }
+
+    //unused function which display user info
     public function showUserInfo(){
         if($this->isPasswordKeptAsHash)
         {
