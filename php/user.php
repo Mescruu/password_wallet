@@ -21,7 +21,6 @@ class user
     } // end __construct();
 
     //functions which return private value of object
-
     public function getId(){
         return $this->id;
     }
