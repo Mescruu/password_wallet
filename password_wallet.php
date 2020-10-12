@@ -1,21 +1,20 @@
 <?php
-session_start();
+session_start();// start the session
 
-include_once('php/BD.php');
-include_once ('php/config.php');//plik konfiguracyjny do bazy danych;
-include_once ('php/commonFunction.php');//plik z typowymi funkcjami
-include_once('php/partition.php'); //przegroda
-
-$user=$db->getUser($_SESSION['login']);
-
-$wallet =true;
-$modal=false; //jezeli true włącz okno z formularze, jezeli false - nie
+include_once('php/BD.php');// database class
+include_once ('php/config.php');// database configuration file;
+include_once ('php/commonFunction.php');// file with functions used in index.php and password_wallet.php
+include_once('php/partition.php'); //partition class
 
 
+$wallet =true; // if true show window with wallet, if false - window with password change
 
+$db = create_DB();//create db handler
+
+// create variables with no initial value
 $password = $login = $description= $web_address = $id = $decrypt = $password_new = $repeatPassword_new = $hashType_new = $old_password = "";
 
-$errors = [  //zmienna przechowująca błędy
+$errors = [  // an array with errors
     "login" => "",
     "password" => "",
     "description" => "",
@@ -26,103 +25,103 @@ $errors = [  //zmienna przechowująca błędy
     "old_password" => ""
 ];
 
-if (!isset($_SESSION['login'])) { //jeżeli użytkownik nie jest zalogowany
+if (!isset($_SESSION['login'])) { // if the user is not logged in
     $_SESSION['info'] = "You must log in first";
-    //header('location: index.php');
+    header("location: index.php"); // redirect to the start page
 }
 
-if (isset($_GET['Logout'])) {
-    session_destroy();
-    unset($_SESSION['login']);
-    header("location: index.php");
+$user=$db->getUser($_SESSION['login']);
+
+
+if (isset($_GET['Logout'])) { // if user logs out
+    session_destroy();//close session
+    unset($_SESSION['login']); // remove the session variable "Login"
+    unset($_SESSION['password']); // remove the session variable "Password"
+
+    header("location: index.php"); //redirect to the start page
 }
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
 
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-
-    if (isset($_REQUEST["Save"])) //próba dodania nowej pozycji
+    if (isset($_REQUEST["Save"])) // request to create  new partition to the wallet
     {
-
-        if (empty($_POST["login"])) {
+        if (empty($_POST["login"])) { // check if the given "login" is empty. If true, write the appropriate error. If false, save the variable login
             $login = "";
             $errors['login'] = "Login is required";
         } else {
             $login = test_input($_POST["login"]);
         }
-        if (empty($_POST["password"])) {
+        if (empty($_POST["password"])) {//similar to the comment above
             $password = "";
             $errors['password'] = "Login is required";
         } else {
             $password = test_input($_POST["password"]);
         }
-        $description = test_input($_POST["description"]);
+        $description = test_input($_POST["description"]); //save the website description
 
-        if (empty($_POST["web_address"])) {
+        if (empty($_POST["web_address"])) { // check if the given "web_address" is empty. If true, write the appropriate error. If false, save the variable web_address
             $web_address = "";
             $errors['web_address'] = "Web address is required";
         } else {
             $web_address = test_input($_POST["web_address"]);
         }
 
-        if (nonerror($errors)) { //jeżeli nie ma zadnego błedu jeżeli elementy są puste
-
-            if($user==null){
+        if (nonerror($errors)) { // if there is no errors
+            if($user==null){ // if there is no user in database with that data
                 $_SESSION['info'] = "Error - there is no user";
             }else{
-              //  $user->showUserInfo();
-                // echo "<hr> hash type ".$hashType;
-                $_SESSION['info'] = $db->createPartition($login, $password, $description, $web_address, $user->getId()); //zwraca obiekt zakładki
+                // create a partition with the following data: login to that website, password, website description, link, user id.
+                $_SESSION['info'] = $db->createPartition($login, $password, $description, $web_address, $user->getId()); // returns information about task realization
+                header('location:password_wallet.php');  // thanks to it, another partition is not added after refreshing the page.
             }
         }else{
-            $_SESSION['info'] = "Error - there is some problem with your data, check the window with form";
+            $_SESSION['info'] = "Error - there is some problem with your data, check the window with form"; // if there are any errors with data given to the form
         }
     }
 
-    if (isset($_REQUEST["Delete"])) //próba dodania nowej pozycji
+    if (isset($_REQUEST["Delete"])) // request to delete the partition
     {
+        echo "delete";
+
         $id = test_input($_POST["id"]);
         $_SESSION['info'] = $db->deletePosition($id);
-        header('location:password_wallet.php');  //dzięki niemu nie dodaje się kolejna pozycja po odświerzeniu strony.
+        header('location:password_wallet.php');
 
     }
 
-    if (isset($_REQUEST["Show"])) //próba dodania nowej pozycji
+    if (isset($_REQUEST["Show"])) //show a password
     {
-
         $id = test_input($_POST["id"]);
         $_SESSION['id'] = $id;
-        $decrypt = $db->decryptPassword($id);
+        $decrypt = $db->decryptPassword($id); //call the password decrypt function
     }
 
-    if (isset($_REQUEST["Hide"])) //próba dodania nowej pozycji
+    if (isset($_REQUEST["Hide"])) // clear a decrypt variable- If decrypt variable is empty application shows user an asterisk ****
     {
         $id = test_input($_POST["id"]);
         $_SESSION['id'] = $id;
         $decrypt = "";
     }
 
-    if (isset($_REQUEST["Change"])) {
+    if (isset($_REQUEST["Change"])) {  // request to change user password
         $wallet =false;
 
-        echo "admin";
-
-        if (empty($_POST["old_password"])) {
+        if (empty($_POST["old_password"])) {  // check if the given "old_password" is empty. If true, write the appropriate error. If false, save the variable old_password
             $old_password = "";
             $errors['old_password'] = "Password is required";
         } else {
             $old_password = test_input($_POST["old_password"]);
         }
 
-        if (empty($_POST["password_new"])) {
+        if (empty($_POST["password_new"])) { //similar to the comment above
+
             $password_new = "";
             $errors['password_new'] = "Password is required";
         } else {
             $password_new = test_input($_POST["password_new"]);
         }
 
-        if (empty($_POST["repeatPassword_new"])) {
+        if (empty($_POST["repeatPassword_new"])) { //similar to the comment above
             $repeatPassword_new = "";
             $errors['repeatPassword_new'] = "Repeat password is required";
         } else {
@@ -130,46 +129,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
 
-        if (empty($_POST["hashType_new"])) {
+        if (empty($_POST["hashType_new"])) { //similar to the comment above
             $hashType_new = "";
             $errors['hashType_new'] = "Hash type is required";
         } else {
             $hashType_new = test_input($_POST["hashType_new"]);
         }
 
-        if ($repeatPassword_new != $password_new) {
+        if ($repeatPassword_new != $password_new) { //check if given passwords are the same
             $errors['repeatPassword'] = "The passwords aren't the same";
         }
 
-        //echo $login;
-        //echo $password;
-        //echo $repeatPassword;
-        //echo $hashType;
-
-        if (nonerror($errors)) { //jeżeli nie ma zadnego błedu jeżeli elementy są puste
+        if (nonerror($errors)) { //if there is no errors
             if($old_password==$_SESSION['password']){
-                $user = $db->getUser($_SESSION['login']); //sprawdzamy czy istnieje uer o takim loginie
+                $user = $db->getUser($_SESSION['login']); //check if there is an user with that login
                 if ($user == null) {
-                    $errors['info'] = "Uoops, we found some error!";
-                  $user->showUserInfo();
+                    $errors['info'] = "Uoops, we found some error!"; //there is no user
                 } else {
-                    if ($hashType_new == "SHA512") {
+                    if ($hashType_new == "SHA512") { //set hash type
                         $hash = true;
                     } else {
                         $hash = false;
                     }
-                    $db->registerUser($_SESSION['login'], $password_new, $hash, false); //true - oznacza pierwsze rejestrowanie użytkownika / false zmiana hasła
+                    //call registerUser function
+                    $db->registerUser($_SESSION['login'], $password_new, $hash, false); // true - means user registration / false - password change
                 }
             }else{
-                $_SESSION['info'] = "Your password is not correct!";
+                $_SESSION['info'] = "Your password is not correct!"; //the message if passwords isn't the same
             }
         }else{
-            var_dump($errors);
+           // var_dump($errors);
         }
     }
 
     if(isset($_SESSION['info'])){
-        if($_SESSION['info']=="Your password has changed" ) //jeżeli udało się zmienić hasło
+        if($_SESSION['info']=="Your password has changed" ) //message if password change
             $wallet=false;
     }
 }
@@ -198,14 +192,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/copy.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> <!-- dodanie ajaxa -->
-
     <?php
-    if (isset($_SESSION['id'])) { //jeżeli jest zmienna sesyjna ID wtedy przenieś do aktywnego pola
+    if (isset($_SESSION['id'])) {// if session variable ID exist, then move to active partition
         echo '
     <script>
     function scroll(id) {
@@ -222,18 +213,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <main>
 
     <div class="container p-1 w-50">
-        <?php if(isset($_SESSION['info'])) echo '<h3 class="text-center text-dark alert-warning p-3 position-absolute w-50">'.$_SESSION['info']."</h3>"; //wyświetlenie błedu ?>
+        <?php if(isset($_SESSION['info'])) echo '<h3 class="text-center text-dark alert-warning p-3 position-absolute w-50">'.$_SESSION['info']."</h3>"; // display the error ?>
 
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="false">
 
             <div class="carousel-inner" data-interval="false">
                 <div class="carousel-item
-            <?php
-                if($wallet){
-                    echo "active";
-                }
-                ?>
-" data-interval="false" id="loginBox">
+            <?php if($wallet) echo "active"; ?>
+                " data-interval="false" id="loginBox">
                     <h1 class="p-5 text-center mt-4">Welcom <?php echo $_SESSION['login']; ?> to your Password Wallet</h1>
                     <div class ="card-frame-password_wallet">
                         <div class="card text-center">
@@ -242,25 +229,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <p class="card-text">Check and add new password and websites to your password wallet.</p>
                                 <hr>
                                 <div id="accordion" class="wallet pl-3">
-
                                     <?php
-                                    $partitions = $db->getPartition($user->getId()); //pobranie zakładek
+                                    //generation of partitions
+                                    $partitions = $db->getPartition($user->getId()); // get partitions
                                     $i=0;
                                     if($partitions!=null){
                                         foreach($partitions as $partition) {
                                             $i++;
                                             if (isset($_SESSION['id'])) {
-                                                if ($partition->getId() == $_SESSION['id']) //jezeli jest to zakładka na której działamy
+                                                if ($partition->getId() == $_SESSION['id'])// if this is the tab we are operating on
                                                 {
-                                                    $partition->setActive(true); //jezeli jest to konkretna zakładka ustaw ją jako aktywna
-                                                    $partition->createPartition($i, $decrypt); //wyświetlenie zakładek
+                                                    $partition->setActive(true); // if it is a THAT partition set it active
+                                                    $partition->createPartition($i, $decrypt); //display partition
                                                     echo '<script> scroll('.$i.'); </script>';
 
                                                 }else{
-                                                    $partition->createPartition($i, ""); //wyświetlenie zakładek
+                                                    $partition->createPartition($i, ""); //display partition
                                                 }
                                             }else{
-                                                $partition->createPartition($i, ""); //wyświetlenie zakładek
+                                                $partition->createPartition($i, ""); //display partition
                                             }
                                         }
                                     }else{
@@ -382,8 +369,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
 </main>
-<?php
-echo $modal?>
 <!-- Modal -->
 <div class="modal fade" id="addForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -454,4 +439,4 @@ echo $modal?>
 </body>
 </html>
 
-<?php if(isset($_SESSION['info'])) $_SESSION['info']=null  ?>
+<?php if(isset($_SESSION['info'])) unset($_SESSION['info']) // remove the session variable "info"?>
