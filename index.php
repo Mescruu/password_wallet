@@ -38,13 +38,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
             $password = test_input($_POST["password"]);
         }
 
-        if (empty($_POST["hashType"])) { //similar to the comment above
-            $hashType = "";
-            $errors['$hashType'] = "Hash type is required";
-        } else {
-            $hashType = test_input($_POST["hashType"]);
-        }
-
         $loginbox=true;
 
         if (nonerror($errors)) { // if there is no errors
@@ -52,12 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
             if($user==null){ // if there is no user in database with that data
                 $loginError= "Error - There is no user with this login";
             }else{
-                if($hashType=="SHA512"){ //set hash type
-                    $hash=1;
-                }else{
-                    $hash=0;
-                }
-                $errors['password']=$db->login($login, $password, $hash)."<br><hr>"; //call login function
+
+                $errors['password']=$db->login($login, $password)."<br><hr>"; //call login function
             }
         }
     }
@@ -188,14 +177,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                                 ?>
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" name="password" id="password" aria-describedby="password" placeholder="Enter password">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="mr-sm-2" for="HashType">Hash Type</label>
-                                <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="hashType">
-                                    <option <?php if (isset($hashType) && $hashType=="SHA512") echo "selected";?> value="SHA512">SHA512</option>
-                                    <option <?php if (isset($hashType) && $hashType=="MHAC") echo "selected";?> value="MHAC">MHAC</option>
-                                </select>
                             </div>
 
                             <input type="submit" name="Login" value="Login" class="btn btn-dark w-25">
