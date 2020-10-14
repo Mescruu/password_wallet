@@ -109,12 +109,12 @@ class BD {
     }
 
 // Function responsible for user login. Arguments: user login, password and the way in which his password was hashed.
-    public  function login($login, $password, $keptAsHash){
+    public  function login($login, $password){
 // create a user with a given login
         $user=$this->getUser($login);
 
         if($user!=null){// if the user with the given login exists:
-            if($keptAsHash==1)// if encoded with SHA512
+            if($user->getIsPasswordKeptAsHash()==1)// if encoded with SHA512
             {
                @$loginPasswordHas = $this->hashPassword($password.$user->getSalt().constant('pepper')); // call SHA512 with password from the form and combined salt and pepper from config.
             }
@@ -131,7 +131,7 @@ class BD {
 
                 header('location: password_wallet.php'); // transfer to the appropriate page
             }else{
-                return "Wrong password or hash type";
+                return "Wrong password";
             }
         }else{ // if there is no such user
             return "There is no user with that login!";
@@ -153,20 +153,52 @@ class BD {
             $keptAsHash=0;
         }
 
-// saving the user's login and password in the session variables
-        $_SESSION['login'] = $login;
-        $_SESSION['password'] = $password;
-
 // call the introductory function to the database
         if($register){
             $insert_sql = 'INSERT INTO `user` (`id`, `login`, `password_hash`, `salt`, `isPasswordKeptAsHash`) VALUES (NULL, "'.$login.'", "'.$passwordHash.'", "'.$salt.'", "'.$keptAsHash.'");';
             $this->insert($insert_sql); // call the function that introduces data to the database
             $_SESSION['info'] = "You are now logged in"; // save the session variable with feedback
+
+            // saving the user's login and password in the session variables
+            $_SESSION['login'] = $login;
+            $_SESSION['password'] = $password;
+
             header('location: password_wallet.php'); // transfer to the appropriate page
         }else{
             $update_sql = 'UPDATE user SET `password_hash`= "'.$passwordHash.'", `salt` = "'.$salt.'", `isPasswordKeptAsHash` = "'.$keptAsHash.'" WHERE login = "'.$login.'";';
             $this->insert($update_sql); // call the insert function to the database
             $_SESSION['info'] = "Your password has changed";// save the session variable with feedback
+
+            $this->changePasswordsInDataBase($_SESSION['password'], $password); //old password to decrypt passwords in wallet, new password to encrypt again
+
+            // saving the user's login and password in the session variables
+            $_SESSION['login'] = $login;
+            $_SESSION['password'] = $password;
+        }
+    }
+    public function changePasswordsInDataBase($old_password, $new_password){
+
+        //query allowing to take the id and password from the database
+        $sql= "select id, password from password";
+
+        // execute the query
+        $result = $this->mysqli->query($sql);
+
+        // if there is such a record
+        if ($result->num_rows > 0) {
+            // output data of each row
+            while($row = $result->fetch_assoc()) {
+                $id = $row["id"]; //take from database itd value
+                $password_from_data_base = $row["password"]; // take from database password value.
+
+                $decrypted = @openssl_decrypt($password_from_data_base, constant('cypherMethod'), $old_password, 0); //decrypt password encrypted with old password
+                $encryptedPassword= @openssl_encrypt($decrypted, constant('cypherMethod'), $new_password, 0); //encrypt password with new password
+
+                $update_sql = 'UPDATE password SET `password`= "'.$encryptedPassword.'" WHERE id = "'.$id.'";'; //update the row
+                $this->insert($update_sql); // call the insert function to the database
+            }
+        } else {
+            $_SESSION['info'] .= " There is some error with change your passwords in wallet";// save the session variable with feedback
         }
     }
 
