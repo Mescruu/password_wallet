@@ -28,10 +28,10 @@ class BD {
         $sql= "select * from user where login='$login'";
 
         // execute the query
-        $result = $this->mysqli->query($sql);
+        $result = $this->select($sql);
 
         // if there is such a record
-        if ($result->num_rows > 0) {
+        if ($result!=null&&$result->num_rows > 0) {
             // output data of each row
             while($row = $result->fetch_assoc()) {
                 $user = new user($row["id"],  $row["login"], $row["password_hash"], $row["salt"], $row["isPasswordKeptAsHash"]); // create a user object with the database fetched data.
@@ -59,7 +59,8 @@ class BD {
     // SQL query for tabs with passwords of the given user
         $sql= "select * from password where id_user='$userId;'";
 
-        $result = $this->mysqli->query($sql);
+        // execute the query
+        $result = $this->select($sql);
 
         if ($result->num_rows > 0) {
             // output data of each row
@@ -91,10 +92,10 @@ class BD {
         $sql= "select password from password where id='$id'";
 
 // query result
-        $result = $this->mysqli->query($sql);
+        $result = $this->select($sql);
 
 // get the password from the database
-        if ($result->num_rows > 0) {
+        if ($result!=null && $result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                $password= $row["password"];
             }
@@ -155,37 +156,41 @@ class BD {
 
 // call the introductory function to the database
         if($register){
-            $insert_sql = 'INSERT INTO `user` (`id`, `login`, `password_hash`, `salt`, `isPasswordKeptAsHash`) VALUES (NULL, "'.$login.'", "'.$passwordHash.'", "'.$salt.'", "'.$keptAsHash.'");';
-            $this->insert($insert_sql); // call the function that introduces data to the database
-            $_SESSION['info'] = "You are now logged in"; // save the session variable with feedback
-
-            // saving the user's login and password in the session variables
-            $_SESSION['login'] = $login;
-            $_SESSION['password'] = $password;
-
-            header('location: password_wallet.php'); // transfer to the appropriate page
+            $this->register($login, $passwordHash, $keptAsHash, $salt);
         }else{
-            $update_sql = 'UPDATE user SET `password_hash`= "'.$passwordHash.'", `salt` = "'.$salt.'", `isPasswordKeptAsHash` = "'.$keptAsHash.'" WHERE login = "'.$login.'";';
-            $this->insert($update_sql); // call the insert function to the database
-            $_SESSION['info'] = "Your password has changed";// save the session variable with feedback
-
-            $this->changePasswordsInDataBase($_SESSION['password'], $password); //old password to decrypt passwords in wallet, new password to encrypt again
-
-            // saving the user's login and password in the session variables
-            $_SESSION['login'] = $login;
-            $_SESSION['password'] = $password;
+            $this->changePassword($login, $passwordHash, $keptAsHash, $salt, $password);
         }
+
+        // saving the user's login and password in the session variables
+        $_SESSION['login'] = $login;
+        $_SESSION['password'] = $password;
     }
+
+    public function register($login, $passwordHash, $keptAsHash, $salt){
+        $insert_sql = 'INSERT INTO `user` (`id`, `login`, `password_hash`, `salt`, `isPasswordKeptAsHash`) VALUES (NULL, "'.$login.'", "'.$passwordHash.'", "'.$salt.'", "'.$keptAsHash.'");';
+        $this->insert($insert_sql); // call the function that introduces data to the database
+        $_SESSION['info'] = "You are now logged in"; // save the session variable with feedback
+        header('location: password_wallet.php'); // transfer to the appropriate page
+
+    }
+    public  function changePassword($login, $passwordHash, $keptAsHash, $salt, $password){
+        $update_sql = 'UPDATE user SET `password_hash`= "'.$passwordHash.'", `salt` = "'.$salt.'", `isPasswordKeptAsHash` = "'.$keptAsHash.'" WHERE login = "'.$login.'";';
+        $this->insert($update_sql); // call the insert function to the database
+        $_SESSION['info'] = "Your password has changed";// save the session variable with feedback
+
+        $this->changePasswordsInDataBase($_SESSION['password'], $password); //old password to decrypt passwords in wallet, new password to encrypt again
+    }
+
     public function changePasswordsInDataBase($old_password, $new_password){
 
         //query allowing to take the id and password from the database
         $sql= "select id, password from password";
 
         // execute the query
-        $result = $this->mysqli->query($sql);
+        $result = $this->select($sql);
 
         // if there is such a record
-        if ($result->num_rows > 0) {
+        if ($result!=null && $result->num_rows > 0) {
             // output data of each row
             while($row = $result->fetch_assoc()) {
                 $id = $row["id"]; //take from database itd value
@@ -240,5 +245,15 @@ class BD {
         }
         return $feedback;
     }
+
+    public function select($sql){
+        if($result = $this->mysqli->query($sql)){ //if select execute properly
+            return $result;
+        }else{
+            return null; //if not
+        }
+    }
+
 }
+
 ?>

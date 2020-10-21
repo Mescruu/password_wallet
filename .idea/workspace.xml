@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7efa11f9-d120-4ca4-aadc-cd31d3f4a2ac" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/php/BD.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/BD.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -71,7 +70,9 @@
       <workItem from="1602522421406" duration="9202000" />
       <workItem from="1602531830727" duration="743000" />
       <workItem from="1602533139084" duration="10000" />
-      <workItem from="1602656421104" duration="2105000" />
+      <workItem from="1602656421104" duration="3640000" />
+      <workItem from="1602694709240" duration="222000" />
+      <workItem from="1603263353877" duration="1885000" />
     </task>
     <servers />
   </component>
@@ -99,10 +100,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="681" y="261" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1602084924731" />
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1602656422535">
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1603263529621">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1602656422535" />
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1603263529621" />
     <state x="606" y="135" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1602263161540">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
