@@ -1,4 +1,5 @@
 <?php
+
 function nonerror($array) { //function which checks if there are errors in given array
     $allclear = 1;
     foreach($array as $item) {

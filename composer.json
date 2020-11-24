@@ -1,0 +1,6 @@
+{
+    "require": {
+        "phpunit/phpunit": "9.2.*",
+      "ext-openssl": "*"
+    }
+}

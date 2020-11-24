@@ -212,9 +212,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
 <body>
 <main>
 
+    <?php
+    if (isset($_SESSION['login_log_successful']) || isset($_SESSION['login_log_failed'])) {// if session variable ID exist, then move to active partition
+        echo ' <div class="m-5 alert alert-dark alert-dismissible p-3 fade show position-fixed " style="width: 20%; z-index: 3" role="alert">
+            <h4 class="text-center">Last logs!</h4>
+            <br>
+                <div class="text-center w-100">
+                    <strong>Successful</strong><br>'.$_SESSION['login_log_successful'].'<br> <br> 
+                    <strong>failed</strong><br>';
+
+                if(isset($_SESSION['login_log_failed'])){
+                    echo $_SESSION['login_log_failed'];
+                }else{
+                    echo "There is no failed logs.";
+                }
+
+              echo'</div>
+
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>';
+    }
+    ?>
+
     <div class="container p-1 w-50">
         <?php if(isset($_SESSION['info'])) echo '<h3 class="text-center text-dark alert-warning p-3 position-absolute w-50">'.$_SESSION['info']."</h3>"; // display the error ?>
-
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="false">
 
             <div class="carousel-inner" data-interval="false">

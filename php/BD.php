@@ -1,7 +1,7 @@
 <?php
-
 include_once('user.php');
 include_once("config.php"); // configuration constants;
+include_once("DB_statics.php"); // functions that could be static in DB class;
 
 class BD {
 
@@ -38,7 +38,7 @@ class BD {
             }
             return $user; // return the user object
         } else {
-            return null;// return null if the user with the given login does not exist.
+            return "null";// return null if the user with the given login does not exist.
         }
     }
 
@@ -102,11 +102,117 @@ class BD {
         } else {
             return null;// in case there is no such record
         }
-// decrypt the password from the "password" table using the encryption method from the config file and the user's password. 0 stands for OPENSSL_ZERO_PADDING
-        $decrypted = @openssl_decrypt($password, constant('cypherMethod'), $_SESSION['password'], 0);
+//caling decrypt function
+        $decrypted = returnDecryptPassword($password, $_SESSION['password']);
 
 // Returns the decrypted password
         return $decrypted;
+    }
+
+    public function removeIp(){
+        $ip=getUserIp();
+        $sql ="DELETE FROM ips WHERE ip='$ip'";
+        return $this->select($sql);
+    }
+
+//function responsible for  return last time of trying login
+public function getLastUserLoginTime($user_id){
+    $sql= "select max(`time`) as time from logs where id_user='$user_id'";
+    $result = $this->select($sql);
+    $time_of_last_login="";
+
+// get the time from the database
+    if ($result!=null && $result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            $time_of_last_login = $row["time"];
+        }
+    } else {
+        return null;// in case there is no such record
+    }
+
+    return $time_of_last_login;
+}
+
+// Function responsible for adding to database count of ip tries to login
+    public function put_ip_tries($addone){
+        if(!isset($_SESSION['failed_ip_counter'])){
+            $_SESSION['failed_ip_counter'] = 0;
+        }
+
+        $ip = getUserIp();
+
+        $sql= "select `count_of_failed` from ips where ip='$ip'";
+        $result = $this->select($sql);
+        $count_of_failed=0;
+
+// get the count of trying from the database
+        if ($result!=null && $result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $count_of_failed = intval($row["count_of_failed"]);
+            }
+            //if count of failed try of login on current ip is greater than 3 block that ip address
+            if($count_of_failed>3){
+                //update record
+                $block = "lock";
+                $sql= "UPDATE ips  SET block = '$block' WHERE ip = '$ip'";
+                $result = $this->insert($sql);
+            }
+
+            if($addone){
+                //add +1 try to count of failed
+                $count_of_failed++;
+                $_SESSION['failed_ip_counter'] += 1;
+
+            }else{
+                //reset count of failed
+                $count_of_failed=0;
+                $_SESSION['failed_ip_counter'] = 0;
+
+            }
+            //update record
+            $sql= "UPDATE ips  SET count_of_failed = '$count_of_failed' WHERE ip = '$ip'";
+            $result = $this->insert($sql);
+        } else {
+            // in case there is no such record add one
+        if($addone){
+            $count_of_failed = 1;
+            $sql= "INSERT INTO ips (id_ips, ip, count_of_failed) VALUES (null, '$ip', 1)";
+        }else{
+            $count_of_failed = 0;
+            $sql= "INSERT INTO ips (id_ips, ip, count_of_failed) VALUES (null, '$ip', 0)";
+        }
+
+        $result = $this->insert($sql);
+        var_dump($result);
+        }
+
+        return $count_of_failed;
+    }
+
+ // Function responsible for return count of ip tries to login from database
+    public  function get_ip_lock(){
+        $ip = getUserIp();
+
+        $sql= "select `block` from ips where ip='$ip'";
+
+        $result = $this->select($sql);
+        $lock="unlocked";
+        $lock_boolean = false;
+
+// get the count of trying from the database
+        if ($result!=null && $result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $lock = $row["block"];
+            }
+        }
+
+        if($lock == "unlocked"){
+            $lock_boolean=false;
+        }else{
+            $lock_boolean=true;
+        }
+
+        return $lock_boolean;
     }
 
 // Function responsible for user login. Arguments: user login, password and the way in which his password was hashed.
@@ -114,29 +220,89 @@ class BD {
 // create a user with a given login
         $user=$this->getUser($login);
 
-        if($user!=null){// if the user with the given login exists:
-            if($user->getIsPasswordKeptAsHash()==1)// if encoded with SHA512
-            {
-               @$loginPasswordHas = $this->hashPassword($password.$user->getSalt().constant('pepper')); // call SHA512 with password from the form and combined salt and pepper from config.
-            }
-            else{//jeżeli jest kodowane MHAC
-                @$loginPasswordHas = $this->HMACPassword($password,$user->getSalt().constant('pepper')); // call the HMAC function with the password from the form and the salt and pepper combined
-            }
+        if($this->get_ip_lock()==false){ // if ip is not lock
 
-            //sprawdzenie hashu
-            if(hash_equals($user->getPassword_Hash(), $loginPasswordHas)){
+            if($user!="null"){ //if user with that login exist
 
-                $_SESSION['login'] = $login;
-                $_SESSION['info'] = "You are now logged in";
-                $_SESSION['password'] = $password;
+                //take last user login time
+                $time_of_last_login = $this->getLastUserLoginTime($user->getId());
 
-                header('location: password_wallet.php'); // transfer to the appropriate page
+                if(properTime($time_of_last_login,date('Y-m-d H:i:s'), $_SESSION['failed_logs_counter'])){// if the user with the given login exists and time of last login is properly
+                    if($user->getIsPasswordKeptAsHash()==1)// if encoded with SHA512
+                    {
+                        @$loginPasswordHas = hashPassword($password.$user->getSalt().constant('pepper')); // call SHA512 with password from the form and combined salt and pepper from config.
+                    }
+                    else{//jeżeli jest kodowane MHAC
+                        @$loginPasswordHas = HMACPassword($password,$user->getSalt().constant('pepper')); // call the HMAC function with the password from the form and the salt and pepper combined
+                    }
+
+                    //sprawdzenie hashu
+                    if(hash_equals($user->getPassword_Hash(), $loginPasswordHas)){
+
+                        $_SESSION['login'] = $login;
+                        $_SESSION['info'] = "You are now logged in";
+                        $_SESSION['password'] = $password;
+
+                        //return appropriate query and insert that to database
+                        $this->insert(login_result(true, $user->getId(), getUserIp()));
+                        $this->setLogs($user->getId());
+
+                        $_SESSION['failed_logs_counter'] = 0;
+
+                        //reset count of ip trying
+                        $this->put_ip_tries(false);
+
+                        header('location: password_wallet.php'); // transfer to the appropriate page
+                    }else{
+                        //return appropriate query and insert that to database
+                        $this->insert(login_result(false, $user->getId(), getUserIp()));
+
+                        $this->setLogs($user->getId());
+
+                        $this->put_ip_tries(true);
+
+                        return "Wrong password";
+                    }
+                }else{ // if there is no such user
+                    $this->insert(login_result(true, $user->getId(), getUserIp()));
+
+                    $this->put_ip_tries(true);
+
+
+                    return "Time isn't left!";
+                }
             }else{
-                return "Wrong password";
+                $this->put_ip_tries(true);
+                return "There is no user with that login!";
             }
-        }else{ // if there is no such user
-            return "There is no user with that login!";
+        }else{
+            return "Ip is locked!";
         }
+    }
+
+    public function setLogs($user_id){
+
+        // Query the record in the table "user" with the given login
+        $sql= "SELECT result, max(time) as time FROM `logs` WHERE id_user = ".$user_id." GROUP BY result";
+
+        // execute the query
+        $result = $this->select($sql);
+
+        // if there is such a record
+        if ($result!=null&&$result->num_rows > 0) {
+            // output data of each row
+            while($row = $result->fetch_assoc()) {
+                if($row["result"]=='failed'){
+                    $failed_date = $row["time"];
+                }else{
+                    $success_date = $row["time"];
+                }
+            }
+
+            $_SESSION['login_log_failed'] = $failed_date;
+            $_SESSION['login_log_successful'] = $success_date;
+        }
+
     }
 
 // function for creating a new user and changing the password
@@ -146,11 +312,11 @@ class BD {
 
         if($keptAsHash)
         { // if it is hashing with SHA512
-            @$passwordHash = $this->hashPassword($password.$salt.constant('pepper')); // include the constant pepper from config.
+            @$passwordHash =hashPassword($password.$salt.constant('pepper')); // include the constant pepper from config.
             $keptAsHash=1;
         }
         else{ // if it is hashing with HMAC
-            @$passwordHash = $this->HMACPassword($password, $salt.constant('pepper'));// combine salt and pepper for hash_hmac as key
+            @$passwordHash = HMACPassword($password, $salt.constant('pepper'));// combine salt and pepper for hash_hmac as key
             $keptAsHash=0;
         }
 
@@ -205,28 +371,6 @@ class BD {
         } else {
             $_SESSION['info'] .= " There is some error with change your passwords in wallet";// save the session variable with feedback
         }
-    }
-
-// Function generating the hash value using the algorithm: SHA512. Arguments: password
-    public  function hashPassword($password){
-        $hashPassword = hash('sha512', $password);
-        return $hashPassword;
-    }
-
-// A function that generates a hash value with a key, using the HMAC method. Arguments: password and salt
-    public  function HMACPassword($password, $salt){
-        /* hash_hmac
-            1.
-            Name of selected hashing algorithm (i.e. "md5", "sha256", "haval160,4", etc..) See hash_hmac_algos() for a list of supported algorithms.
-
-            2.
-            Message to be hashed.
-
-            3.key
-            Shared secret key used for generating the HMAC variant of the message digest.
-         */
-        $hashPassword =  hash_hmac('sha512', $password, $salt); //
-        return $hashPassword;
     }
 
 // Database introductory function - the argument is a SQL string

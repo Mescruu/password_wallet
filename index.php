@@ -51,6 +51,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
         }
     }
 
+    if (isset($_REQUEST["unlock"])) { // request to remove ip block
+        $loginbox=true;
+
+        $errors['password']= "ip unlocked"."<br><hr>";
+        $db->removeIp(); //call login function
+        $_SESSION['failed_ip_counter']=0;
+    }
+
     if (isset($_REQUEST["Register"])) { // request to register user to the wallet
         $loginbox=false; //display box with register form
 
@@ -162,8 +170,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                         <hr>
 
                         <form action="index.php" method="post">
+                            <input id="loginLogsCounter" name="loginLogsCounter" type="hidden" value="
+                             <?php
+                            //time = failed logs count * 1000ms
+
+                            if (!isset($_SESSION['failed_logs_counter'])) {
+
+                                $_SESSION['failed_logs_counter'] = 0;
+                            }
+                            if (!isset($_SESSION['failed_ip_counter'])) {
+
+                                $_SESSION['failed_ip_counter'] = 0;
+                            }
+
+
+
+                            //take greater value of count
+                            if($_SESSION['failed_logs_counter']>$_SESSION['failed_ip_counter']){
+                                $counter = $_SESSION['failed_logs_counter'];
+                            }else{
+                                $counter = $_SESSION['failed_ip_counter'];
+                            }
+                            if($_SESSION['failed_ip_counter']<4){
+                                if ($counter <2)
+                                    echo 1000*0;
+
+                                if ($counter == 2)
+                                    echo 1000*5;
+
+                                if ($counter == 3)
+                                    echo 1000*10;
+
+                                if ($counter >= 4)
+                                    echo 1000*120;
+                            }else{
+                                echo 0;
+                            }
+
+                            ?>
+                            ">
+
+
                             <div class="form-group">
                                 <?php
+
                                 if($errors['login']!=="")
                                     echo '<span class="text-danger">'.$errors['login']."</span>";
                                 ?>
@@ -173,13 +223,81 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                             <div class="form-group">
                                 <?php
                                 if($errors['password']!=="")
-                                    echo '<span class="text-danger">'. $errors['password']."</span>";
+                                {
+                                    if($errors['password']=="Ip is locked!"){
+                                        echo '<span class="text-danger">'. $errors['password']."</span>";
+                                        echo '<input type="submit" id="unlockSubmit" name="unlock" value="unlock ip" class="btn btn-dark w-25"><hr>';
+                                    }else{
+                                        echo '<span class="text-danger">'. $errors['password']."</span>";
+                                    }
+                                }
+                                ?>
+                                <?php
+                                if(isset($_SESSION['failed_logs_counter'])) {
+                                    if($_SESSION['failed_logs_counter']>=2){
+                                        if(isset($_SESSION['failed_ip_counter'])){
+                                            if($_SESSION['failed_ip_counter']<4){
+                                                echo '<div id="registrationClosedText">Registration closes in <span id="time">00:00</span> minutes!</div>';
+                                            }
+                                        } else{
+                                            echo '<div id="registrationClosedText">Registration closes in <span id="time">00:00</span> minutes!</div>';
+                                        }
+                                    }
+                                }
                                 ?>
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" name="password" id="password" aria-describedby="password" placeholder="Enter password">
                             </div>
 
-                            <input type="submit" name="Login" value="Login" class="btn btn-dark w-25">
+                            <script>
+                            <?php
+                            if(isset($_SESSION['failed_logs_counter'])) {
+                               echo ' window.onload = function () {
+                                    startTimer(document.getElementById("loginLogsCounter").value/1000, document.querySelector("#time"));
+                                }';
+                            }
+                            ?>
+
+
+                            function startTimer(duration, display) {
+
+                                var timer = duration, minutes, seconds;
+                                setInterval(function () {
+                                    minutes = parseInt(timer / 60, 10)
+                                    seconds = parseInt(timer % 60, 10);
+
+                                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                                    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                                    display.textContent = minutes + ":" + seconds;
+                                        if(timer>=0) {
+                                            timer--
+                                            <?php
+                                            if(isset($_SESSION['failed_logs_counter']))
+                                                echo 'document.getElementById("loginSubmit").classList.add("disabled")';
+                                            ?>
+
+
+                                        }
+                                        if (timer <= 0) {
+                                            document.getElementById("loginSubmit").classList.remove("disabled");
+                                            document.getElementById("loginSubmit").disabled=false;
+                                            document.getElementById("registrationClosedText").style.display = "none";
+                                        }
+                                }, 1000);
+                            }
+
+                            </script>
+
+                            <input type="submit" id="loginSubmit" name="Login" value="Login" class="btn btn-dark w-25"
+                                <?php
+                                if(isset($_SESSION['failed_logs_counter'])) {
+                                    if($_SESSION['failed_logs_counter']>=2)
+                                        echo 'disabled';
+                                }
+                                ?>
+                            >
+
                         </form>
                     </div>
                 </div>

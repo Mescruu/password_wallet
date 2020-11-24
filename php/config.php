@@ -1,4 +1,5 @@
 <?php
+
 //file with constants and db create function.
 define('DB_SERVER', 'localhost');
 define('DB_USERNAME', 'root');

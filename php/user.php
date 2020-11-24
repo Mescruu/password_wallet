@@ -1,6 +1,5 @@
 <?php
 
-
 class user
 {
     private $id = null;
