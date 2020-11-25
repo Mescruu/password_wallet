@@ -2,19 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7efa11f9-d120-4ca4-aadc-cd31d3f4a2ac" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/php-test-framework.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/commonFunctionTest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/userTest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/xml.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/xml.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.phpunit.result.cache" beforeDir="false" afterPath="$PROJECT_DIR$/.phpunit.result.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/password_wallet.php" beforeDir="false" afterPath="$PROJECT_DIR$/password_wallet.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/php/BD.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/BD.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/php/commonFunction.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/commonFunction.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/php/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/php/partition.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/partition.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/php/user.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/user.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +77,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.jetbrains.php.phpunit.codeGeneration.PhpNewTestDialog.defaultLibrary" value="PHPUnit 6+" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/tests" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -94,14 +85,15 @@
     <property name="settings.editor.selected.configurable" value="php.test.frameworks.configurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Programy\XAMPP\htdocs\BSI\password_wallet" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Programy\XAMPP\htdocs\freeline" />
     </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Programy\XAMPP\htdocs\BSI\password_wallet\tests" />
+      <recent name="C:\Programy\XAMPP\htdocs\BSI\password_wallet" />
+    </key>
   </component>
-  <component name="RunManager" selected="PHPUnit.tests">
+  <component name="RunManager" selected="PHPUnit.BDTest">
     <configuration name="BDTest" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
       <TestRunner class="password_wallet\BDTest" file="$PROJECT_DIR$/tests/BDTest.php" scope="Class" />
       <method v="2" />
@@ -131,8 +123,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="PHPUnit.tests" />
         <item itemvalue="PHPUnit.BDTest" />
+        <item itemvalue="PHPUnit.tests" />
         <item itemvalue="PHPUnit.userTest" />
         <item itemvalue="PHPUnit.partitionTest (1)" />
         <item itemvalue="PHPUnit.partitionTest" />
@@ -174,6 +166,7 @@
       <workItem from="1606137591238" duration="11123000" />
       <workItem from="1606214533503" duration="5802000" />
       <workItem from="1606222588530" duration="3143000" />
+      <workItem from="1606288833702" duration="3737000" />
     </task>
     <servers />
   </component>
@@ -213,22 +206,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="428" y="253" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1604236791401" />
-    <state width="1641" height="227" key="GridCell.Tab.0.bottom" timestamp="1606225733977">
+    <state width="1640" height="227" key="GridCell.Tab.0.bottom" timestamp="1606292573882">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1641" height="227" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606225733977" />
-    <state width="1641" height="227" key="GridCell.Tab.0.center" timestamp="1606225733977">
+    <state width="1640" height="227" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606292573882" />
+    <state width="1640" height="227" key="GridCell.Tab.0.center" timestamp="1606292573881">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1641" height="227" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606225733977" />
-    <state width="1641" height="227" key="GridCell.Tab.0.left" timestamp="1606225733977">
+    <state width="1640" height="227" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606292573881" />
+    <state width="1640" height="227" key="GridCell.Tab.0.left" timestamp="1606292573881">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1641" height="227" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606225733977" />
-    <state width="1641" height="227" key="GridCell.Tab.0.right" timestamp="1606225733977">
+    <state width="1640" height="227" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606292573881" />
+    <state width="1640" height="227" key="GridCell.Tab.0.right" timestamp="1606292573882">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1641" height="227" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606225733977" />
+    <state width="1640" height="227" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606292573882" />
     <state width="938" height="348" key="GridCell.Tab.1.bottom" timestamp="1606158916729">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -261,10 +254,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="681" y="261" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1602084924731" />
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1606222594432">
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1606288845877">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606222594432" />
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606288845877" />
     <state x="606" y="135" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1602263161540">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -277,10 +270,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606225173807" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1606214624096">
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1606291268489">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606214624096" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606291268489" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/password_wallet@BDTest.xml" NAME="BDTest Coverage Results" MODIFIED="1606139321962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="PhpCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />

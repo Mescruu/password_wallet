@@ -57,6 +57,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
         $errors['password']= "ip unlocked"."<br><hr>";
         $db->removeIp(); //call login function
         $_SESSION['failed_ip_counter']=0;
+
+        $_SESSION['failed_logs_counter']=0;
+
     }
 
     if (isset($_REQUEST["Register"])) { // request to register user to the wallet
@@ -222,14 +225,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                             </div>
                             <div class="form-group">
                                 <?php
+
+                                if(isset($_SESSION['failed_ip_counter'])){
+                                    if($_SESSION['failed_ip_counter']>=4){
+                                        echo '<span class="text-danger">Ip is locked!</span><br><br>';
+                                        echo '<input type="submit" id="unlockSubmit" name="unlock" value="unlock ip" class="btn btn-dark w-25"><br><br>';
+                                    }
+                                }
                                 if($errors['password']!=="")
                                 {
-                                    if($errors['password']=="Ip is locked!"){
                                         echo '<span class="text-danger">'. $errors['password']."</span>";
-                                        echo '<input type="submit" id="unlockSubmit" name="unlock" value="unlock ip" class="btn btn-dark w-25"><hr>';
-                                    }else{
-                                        echo '<span class="text-danger">'. $errors['password']."</span>";
-                                    }
                                 }
                                 ?>
                                 <?php
@@ -274,7 +279,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                                             timer--
                                             <?php
                                             if(isset($_SESSION['failed_logs_counter']))
-                                                echo 'document.getElementById("loginSubmit").classList.add("disabled")';
+                                                if($_SESSION['failed_logs_counter']>=2)
+                                                    echo 'document.getElementById("loginSubmit").classList.add("disabled")';
                                             ?>
 
 
@@ -295,6 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                                     if($_SESSION['failed_logs_counter']>=2)
                                         echo 'disabled';
                                 }
+
                                 ?>
                             >
 

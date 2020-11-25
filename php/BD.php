@@ -110,6 +110,8 @@ class BD {
     }
 
     public function removeIp(){
+
+
         $ip=getUserIp();
         $sql ="DELETE FROM ips WHERE ip='$ip'";
         return $this->select($sql);
@@ -150,24 +152,24 @@ public function getLastUserLoginTime($user_id){
             while($row = $result->fetch_assoc()) {
                 $count_of_failed = intval($row["count_of_failed"]);
             }
-            //if count of failed try of login on current ip is greater than 3 block that ip address
-            if($count_of_failed>3){
-                //update record
-                $block = "lock";
-                $sql= "UPDATE ips  SET block = '$block' WHERE ip = '$ip'";
-                $result = $this->insert($sql);
-            }
 
             if($addone){
                 //add +1 try to count of failed
                 $count_of_failed++;
-                $_SESSION['failed_ip_counter'] += 1;
+                $_SESSION['failed_ip_counter'] = $count_of_failed;
 
             }else{
                 //reset count of failed
                 $count_of_failed=0;
                 $_SESSION['failed_ip_counter'] = 0;
 
+            }
+            //if count of failed try of login on current ip is greater than 3 block that ip address
+            if($count_of_failed>3){
+                //update record
+                $block = "lock";
+                $sql= "UPDATE ips  SET block = '$block' WHERE ip = '$ip'";
+                $result = $this->insert($sql);
             }
             //update record
             $sql= "UPDATE ips  SET count_of_failed = '$count_of_failed' WHERE ip = '$ip'";
@@ -183,7 +185,7 @@ public function getLastUserLoginTime($user_id){
         }
 
         $result = $this->insert($sql);
-        var_dump($result);
+        //var_dump($result);
         }
 
         return $count_of_failed;
@@ -195,18 +197,20 @@ public function getLastUserLoginTime($user_id){
 
         $sql= "select `block` from ips where ip='$ip'";
 
+
         $result = $this->select($sql);
-        $lock="unlocked";
+        $lock="unlock";
         $lock_boolean = false;
 
-// get the count of trying from the database
+// get the count of trying from the database or is the ip locked
         if ($result!=null && $result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                 $lock = $row["block"];
+
             }
         }
 
-        if($lock == "unlocked"){
+        if($lock == "unlock"){
             $lock_boolean=false;
         }else{
             $lock_boolean=true;
@@ -257,17 +261,21 @@ public function getLastUserLoginTime($user_id){
                         //return appropriate query and insert that to database
                         $this->insert(login_result(false, $user->getId(), getUserIp()));
 
-                        $this->setLogs($user->getId());
+                        //$this->setLogs($user->getId());
 
                         $this->put_ip_tries(true);
 
-                        return "Wrong password";
+                        //the limit reached
+                        if($_SESSION['failed_ip_counter']>=4){
+                            return "unlock ip!";
+                        }else{
+                            return "Wrong password";
+                        }
                     }
                 }else{ // if there is no such user
                     $this->insert(login_result(true, $user->getId(), getUserIp()));
 
                     $this->put_ip_tries(true);
-
 
                     return "Time isn't left!";
                 }
@@ -276,7 +284,10 @@ public function getLastUserLoginTime($user_id){
                 return "There is no user with that login!";
             }
         }else{
-            return "Ip is locked!";
+            //if user clear cookies set them
+            $_SESSION['failed_ip_counter'] = 4;
+
+            return "unlock ip!";
         }
     }
 
