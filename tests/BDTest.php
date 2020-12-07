@@ -19,7 +19,7 @@ class BDTest extends TestCase
             [
                 "F6tYCnkWCqCG7NDz9bqbLw==", //input password
                 "test2", //input session password
-                 false //expected
+                false//expected
             ]
         ];
     }
