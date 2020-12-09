@@ -29,6 +29,10 @@ if (!isset($_SESSION['login'])) { // if the user is not logged in
     $_SESSION['info'] = "You must log in first";
     header("location: index.php"); // redirect to the start page
 }
+    //if there is no session with key mode
+    if(isset($_SESSION['mode'])==false){
+        $_SESSION['mode'] = 'read-mode';
+    }
 
 $user=$db->getUser($_SESSION['login']);
 
@@ -40,6 +44,20 @@ if (isset($_GET['Logout'])) { // if user logs out
 
     header("location: index.php"); //redirect to the start page
 }
+
+    if (isset($_GET["mode"])) // request to change lock mode to opposite
+    {
+                   if(isset($_SESSION['mode'])){
+                       if($_SESSION['mode']=='read-mode'){
+                           $_SESSION['mode'] = 'modify-mode';
+                       }
+                       else{
+                           $_SESSION['mode'] = 'read-mode';
+                       }
+                   }else{
+                       $_SESSION['mode'] = 'read-mode';
+                   }
+    }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
 
@@ -81,12 +99,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
 
     if (isset($_REQUEST["Delete"])) // request to delete the partition
     {
-        echo "delete";
+        if(isset($_SESSION['mode'])){
+            if($_SESSION['mode']=='modify-mode'){
+               // echo "delete";
+                $id = test_input($_POST["id"]);
+                $_SESSION['info'] = $db->deletePosition($id);
+                header('location:password_wallet.php');
+            }
 
-        $id = test_input($_POST["id"]);
-        $_SESSION['info'] = $db->deletePosition($id);
-        header('location:password_wallet.php');
-
+        }
     }
 
     if (isset($_REQUEST["Show"])) //show a password
@@ -101,6 +122,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
         $id = test_input($_POST["id"]);
         $_SESSION['id'] = $id;
         $decrypt = "";
+    }
+
+    if (isset($_REQUEST["Access"])) {  // request to change user password
+
+        if (!empty($_POST["Userlogin"]) && !empty($_POST["Password"]) && !empty($_POST["Otherlogin"])) {  // check if the given "login" is empty. If true, write the appropriate error. If false, save the variable old_password
+            $userLogin = test_input($_POST["Userlogin"]);
+            $userPassword = test_input($_POST["Password"]);
+            $otherlogin = test_input($_POST["Otherlogin"]);
+
+            $id = $_POST['id'];
+
+            $_SESSION['info'] = $db->share($userLogin,$userPassword, $otherlogin, $id);
+        } else {
+            $_SESSION['info']="You have to write a Login";
+        }
     }
 
     if (isset($_REQUEST["Change"])) {  // request to change user password
@@ -235,6 +271,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
         </div>';
     }
     ?>
+
+    <div class="m-5 alert alert-light alert-dismissible p-3 fade show position-fixed border-bottom text-center" style="width: 20%; z-index: 3; height: auto; right: 0px" role="alert">
+        <h4 class="text-center px-3 text-justify">You are in <br>
+            <?php if(isset($_SESSION['mode'])){ if($_SESSION['mode']=='read-mode'){ echo 'read mode - You can not delete any partitions';} else{echo 'modify mode - You can delete partitions';}}?>
+        </h4>
+
+        <h5>Click on padlock below to
+            <?php if(isset($_SESSION['mode'])){ if($_SESSION['mode']=='read-mode'){ echo 'enter modify mode';} else{echo 'enter read mode';}}?>
+        </h5>
+        <hr>
+        <form action="password_wallet.php" method="get">
+            <input type="submit" value="<?php if(isset($_SESSION['mode'])){ if($_SESSION['mode']=='modify-mode'){ echo 'modify';} else{echo 'read';}}?>" name="mode"class="btn btn-light btn-circle btn-xl
+        <?php if(isset($_SESSION['mode'])){ if($_SESSION['mode']=='read-mode'){ echo 'mode-alert-lock';} else{echo 'mode-alert-unlock';}}?>
+        ">
+        </form>
+    </div>
 
     <div class="container p-1 w-50">
         <?php if(isset($_SESSION['info'])) echo '<h3 class="text-center text-dark alert-warning p-3 position-absolute w-50">'.$_SESSION['info']."</h3>"; // display the error ?>

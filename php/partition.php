@@ -9,8 +9,9 @@ class partition
     private $description;
     private $login;
     private $active; // value that stored information if the tab is open
+    private $shared;
 
-    public function __construct($id, $password, $id_user, $web_address, $description, $login)
+    public function __construct($id, $password, $id_user, $web_address, $description, $login, $shared)
     {
         $this->id = $id;
         $this->password = $password;
@@ -19,6 +20,7 @@ class partition
         $this->description = $description;
         $this->login = $login;
         $active = false;
+        $this->shared = $shared;
 
     } // end __construct();
 
@@ -39,11 +41,15 @@ class partition
     {
         return $this->description;
     }
+    public function getShared(){
+        return $this->shared;
+    }
     public function getLogin(){
         return $this->login;
     }
-    public function setActive($state){
-        $this->active=$state;
+    public function setActive($state)
+    {
+        $this->active = $state;
     }
 
     function createPartition($i, $decrypt){ // creating partitions in the wallet (each items from the database)
@@ -64,7 +70,12 @@ class partition
                                     <div class="card">
                                         <div class="card-header bg-dark" id="heading"'.$i.'>
                                                 <button class="btn text-light font-weight-bold w-100" style="font-size:20px" data-toggle="collapse" data-target="#collapse'.$i.'" aria-expanded="true" aria-controls="collapse'.$i.'">
-                                                    '.$this->web_address.'
+                                                    '.$this->web_address;
+                                                    if($this->shared==true) {
+                                                        echo ' [shared]';
+                                                    }
+            echo ' 
+                                                    
                                                 </button>
                                         </div>
 
@@ -92,10 +103,27 @@ class partition
                                               </tbody>
                                             </table>
                                             <br>   
-                                            <div class="w-100 d-flex justify-content-center">
+                                            <div class="w-100 d-flex justify-content-center mb-3">
                                             <!--Divided into two forms to create confirmation system to delete record quickly-->
-                                                <form action="password_wallet.php" method="post" class="text-center d-inline" onsubmit="return confirm(\'Are you sure? This operation can not be undone!\');">
-                                                    <input type="submit" name="Delete" value="Delete" class="btn btn-danger m-1" style="width: 150px;">
+                                                <form action="password_wallet.php" method="post" class="text-center d-inline" onsubmit="return confirm(';
+                                                    //if there is a mode sesssion value and user is owner
+                                                    if(isset($_SESSION['mode']) && $this->shared==false){
+                                                        if($_SESSION['mode']=='modify-mode') {
+                                                            echo '\'Are you sure? This operation can not be undone!\');">\'';
+
+                                                            echo '<input type="submit" name="Delete" value="Delete" class="btn btn-danger m-1" style="width: 150px;">';
+                                                        }else{
+                                                            echo '\'You can not do this in read mode!\');">\'';
+
+                                                            echo '<input type="submit" name="--" value="Delete" class="btn btn-danger m-1 disabled" style="width: 150px;">';
+                                                        }
+                                                    }else{
+                                                        echo '\'You are not the owner of this partition!\');">\'';
+
+                                                        echo '<input type="submit" name="--" value="Delete" class="btn btn-danger m-1 disabled" style="width: 150px;">';
+                                                    }
+
+                                             echo '
                                                    <input type="number" id="id" name="id" value="'.$this->id.'" style="display: none">
                                                 </form>
                                                 <form  action="password_wallet.php" method="post" class="text-center d-inline">
@@ -106,12 +134,35 @@ class partition
                                                         echo '<input type="submit" name="Hide" value="Hide" class="btn btn-outline-light m-1" style="width: 150px;">';
                                                     }
                                                     echo '
+                                                    
                                                     <a class="btn btn-light m-1" href="http://'.$this->web_address.'" style="width: 150px;">
                                                         To the site  &#8594;
                                                     </a>
+                                                    
+                                                     <a class="btn btn-outline-light" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm">Share password</a>
+                                                    
                                                 </form>
+
                                             </div>                                         
                                             
+                                                 <form  action="password_wallet.php" method="post" class="text-center w-100">
+                                                     <div class="collapse multi-collapse" id="shareForm">
+                                                      <div class="card card-body w-100 px-5 text-center">
+                                                                 <input type="number" id="id" name="id" value="'.$this->id.'" style="display: none">
+                                                                <label for="LoginInput">Your login</label>
+                                                                <input type="login" name="Userlogin" class="form-control btn btn-dark" id="LoginInput" aria-describedby="Login Input" placeholder="Enter your login">
+                                                                
+                                                                <label for="password">Your passsword</label>
+                                                                <input type="password" class="form-control btn btn-dark" name="Password" id="password" aria-describedby="password" placeholder="Enter password">
+                                                                
+                                                                <label for="LoginInput">User login</label>
+                                                                <input type="login" name="Otherlogin" class="form-control btn btn-dark" id="LoginInput" aria-describedby="Login Input"  placeholder="Enter other user login">
+                                                                <hr>
+                                                                <input type="submit" name="Access" value="Share" class="m-auto form-control btn btn-dark" style="width: 150px;">
+                                                      </div>
+                                                    </div>
+                                                </form>
+                                                
                                              </div>
                                         </div>
                                     </div>

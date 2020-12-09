@@ -43,8 +43,8 @@ class BD {
     }
 
     public  function  createPartition($login, $password, $description, $web_address, $user_Id){
-        // encrypt the password using the encryption method in the config file and the user's password. 1 means OPENSSL_ZERO_PADDING
-        $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), $_SESSION['password'], 0);
+        // encrypt the password using the encryption method in the config file and the user's login. 1 means OPENSSL_ZERO_PADDING
+        $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), constant('pepper').$_SESSION['login'], 0);
 
         // call the insert function to the database
         $insert_sql = 'INSERT INTO `password` (`id`, `password`, `id_user`, `web_address`, `description`,`login`) VALUES (NULL, "'.$encryptedPassword.'", "'.$user_Id.'", "'.$web_address.'", "'.$description.'", "'.$login.'");';
@@ -57,15 +57,25 @@ class BD {
 // Get the appropriate partition. argument: the user id
     public function getPartition($userId){
     // SQL query for tabs with passwords of the given user
-        $sql= "select * from password where id_user='$userId;'";
+        $sql= "
+           SELECT distinct * FROM password p
+            WHERE p.id in (SELECT id_password FROM sharing WHERE id_user_taking = ".$userId." OR id_user_giving = ".$userId.")
+                OR p.id_user = ".$userId;
 
         // execute the query
         $result = $this->select($sql);
-
         if ($result->num_rows > 0) {
             // output data of each row
             while($row = $result->fetch_assoc()) {
-                $partitions[] = new partition($row["id"],  $row["password"], $row["id_user"], $row["web_address"], $row["description"], $row["login"]);
+
+                //if user is owner of that password
+                $sharedOrNot = false;
+                //if password was shared to the user
+                if($row["id_user"]!=$userId){
+                    $sharedOrNot = true;
+                }
+
+                $partitions[] = new partition($row["id"],  $row["password"], $row["id_user"], $row["web_address"], $row["description"], $row["login"], $sharedOrNot);
             }
             return $partitions; // return the array of partition.
 
@@ -76,14 +86,47 @@ class BD {
 
 // Function that removes a record from the "password" table with the given id. Item id.
     public  function  deletePosition($id){
-// Query removing the item from the portfolio
-        $sql= "DELETE from password where id='$id;'";
+        if($this->checkifuserisowner($id)){
+
+            // Query removing the item from the portfolio and sharing
+            $sql= "DELETE from sharing where id_password='$id;'";
+            $sql2= "DELETE from password where id='$id;'";
 
 // SQL execution
-        if ($this->mysqli->query($sql) === TRUE) {
-            return "Position removed"."\n";
-        } else {
-            return "Position was not removed". $this->mysqli->error;
+            $this->mysqli->query($sql);
+
+// SQL execution
+            if ($this->mysqli->query($sql2) === TRUE) {
+                return "Position removed"."\n";
+            } else {
+                return "Position was not removed". $this->mysqli->error;
+            }
+        }else{
+            return "You are not an owner!"."\n";
+
+        }
+    }
+
+    //check if user is password owner
+    public function checkifuserisowner($id){
+        //take password owner login.
+        $sql = '
+        SELECT lower(u.login) as login FROM `password` p 
+            INNER JOIN user u
+            ON p.id_user = u.id
+        WHERE p.id = '.$id.'
+        ';
+        $result = $this->select($sql);
+
+        //if logins are the same return true (user is owner)
+        if ($result!=null && $result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+               if( $_SESSION['login']==$row["login"]){
+                   return true;
+               }else{
+                   return false;
+               }
+            }
         }
     }
 
@@ -102,8 +145,11 @@ class BD {
         } else {
             return null;// in case there is no such record
         }
-//caling decrypt function
-        $decrypted = returnDecryptPassword($password, $_SESSION['password']);
+
+        $decryptString = $this->combine_user_login($id);
+
+//caling decrypt function //passwords are decrypted using user login
+        $decrypted = returnDecryptPassword($password, $decryptString);
 
 // Returns the decrypted password
         return $decrypted;
@@ -247,6 +293,8 @@ public function getLastUserLoginTime($user_id){
                         $_SESSION['info'] = "You are now logged in";
                         $_SESSION['password'] = $password;
 
+                        $_SESSION['mode']='read-mode'; //enter with lock mode
+
                         //return appropriate query and insert that to database
                         $this->insert(login_result(true, $user->getId(), getUserIp()));
                         $this->setLogs($user->getId());
@@ -354,14 +402,60 @@ public function getLastUserLoginTime($user_id){
         $update_sql = 'UPDATE user SET `password_hash`= "'.$passwordHash.'", `salt` = "'.$salt.'", `isPasswordKeptAsHash` = "'.$keptAsHash.'" WHERE login = "'.$login.'";';
         $this->insert($update_sql); // call the insert function to the database
         $_SESSION['info'] = "Your password has changed";// save the session variable with feedback
-
-        $this->changePasswordsInDataBase($_SESSION['password'], $password); //old password to decrypt passwords in wallet, new password to encrypt again
     }
 
-    public function changePasswordsInDataBase($old_password, $new_password){
+    public function share($UserLogin, $UserPassword, $otherLogin, $id){
 
-        //query allowing to take the id and password from the database
-        $sql= "select id, password from password";
+        //check if user know passes
+        if($UserLogin==$_SESSION['login'] && $UserPassword==$_SESSION['password']){
+            $user_giving=$this->getUser($_SESSION['login']);
+            $user_taking=$this->getUser($otherLogin);
+
+            if($user_taking!="null"){ //if user with that login exist
+
+                $select_sql = 'SELECT * FROM `sharing` WHERE `id_user_giving`="'.$user_giving->getId().'" AND `id_user_taking` ="'.$user_taking->getId().'" AND `id_password`="'.$id.'"';
+                //echo  $select_sql;
+
+                if($user_taking->getId()!=$user_giving->getId()){
+                    //check if there is no sharing like this and giving user id is not equal taking user id
+                    if(($this->select($select_sql))->num_rows == 0){
+
+                        //echo $insert_sql;
+
+                        //change sharing password code method
+                        $this->changePasswordsInDataBase($id, $user_taking->getLogin()); //change giving passwords decrypt string
+
+                        //return information if task complete
+                        $insert_sql = 'INSERT INTO `sharing` (`id_user_giving`, `id_user_taking`, `id_password`) VALUES ("'.$user_giving->getId().'", "'.$user_taking->getId().'", "'.$id.'");';
+                        $this->insert($insert_sql);
+
+                        return "Access granted!";
+
+                    }else{
+                        return "Access was  granted earlier!";
+                    }
+                }else{
+                    return "You can not grant access to yourself!";
+                }
+            }else{
+                //return error when something goes wrong
+                return "There is no user with given Login!";
+            }
+
+        }else{
+            return "Your login or password is not correct!";
+
+        }
+
+    }
+
+    public function changePasswordsInDataBase($id, $new_user_login){ //id of  password and user login that get access to password
+
+        $old_logins = $this->combine_user_login($id);
+        $new_logins = $old_logins.$new_user_login; //add new user login to string that is used to code password
+
+        //query allowing to take sharing password id and password from the database
+        $sql= "select id, password from password WHERE `id`=".$id;
 
         // execute the query
         $result = $this->select($sql);
@@ -373,8 +467,8 @@ public function getLastUserLoginTime($user_id){
                 $id = $row["id"]; //take from database itd value
                 $password_from_data_base = $row["password"]; // take from database password value.
 
-                $decrypted = @openssl_decrypt($password_from_data_base, constant('cypherMethod'), $old_password, 0); //decrypt password encrypted with old password
-                $encryptedPassword= @openssl_encrypt($decrypted, constant('cypherMethod'), $new_password, 0); //encrypt password with new password
+                $decrypted = @openssl_decrypt($password_from_data_base, constant('cypherMethod'), $old_logins, 0); //decrypt password encrypted with old password
+                $encryptedPassword= @openssl_encrypt($decrypted, constant('cypherMethod'), $new_logins, 0); //encrypt password with new password
 
                 $update_sql = 'UPDATE password SET `password`= "'.$encryptedPassword.'" WHERE id = "'.$id.'";'; //update the row
                 $this->insert($update_sql); // call the insert function to the database
@@ -383,6 +477,34 @@ public function getLastUserLoginTime($user_id){
             $_SESSION['info'] .= " There is some error with change your passwords in wallet";// save the session variable with feedback
         }
     }
+
+    public function combine_user_login($id){
+
+        $select_query = '
+                        SELECT u.id, u.login FROM sharing s 
+                        INNER JOIN user u 
+                        ON s.id_user_taking = u.id
+                        WHERE s.id_password='.$id.'
+                        ORDER BY u.id
+                        ';
+
+        $result = $this->select($select_query);
+
+        //on start $string using to code is pepper + logins user that share password.
+        $logins=constant('pepper').$_SESSION['login'];
+
+        if ($result!=null && $result->num_rows > 0) {
+            // output data of each row
+            while($row = $result->fetch_assoc()) {
+                $logins.= $row["login"]; //take from database login value
+            }
+        }
+
+        return $logins;
+        //pobranie loginow uzytkownikow, ktorzy maja dostep do danego hasła i zwrocenie polaczanych wzgledem id pozycji loginow
+        //do pieprzu i loginu uzytkownika ktory udostepnia dodaj loginy uzytkownikow ktorym został udostepnione hasło
+    }
+
 
 // Database introductory function - the argument is a SQL string
     public function insert($sql) {
@@ -403,7 +525,7 @@ public function getLastUserLoginTime($user_id){
 
     public function select($sql){
         if($result = $this->mysqli->query($sql)){ //if select execute properly
-            return $result;
+                return $result;
         }else{
             return null; //if not
         }

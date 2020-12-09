@@ -3,8 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="7efa11f9-d120-4ca4-aadc-cd31d3f4a2ac" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.phpunit.result.cache" beforeDir="false" afterPath="$PROJECT_DIR$/.phpunit.result.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/BDTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/BDTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/password_wallet.php" beforeDir="false" afterPath="$PROJECT_DIR$/password_wallet.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/php/BD.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/BD.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/php/DB_Statics.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/DB_Statics.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/php/partition.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/partition.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,6 +20,20 @@
     <execution>
       <executable path="composer" />
     </execution>
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -168,6 +186,10 @@
       <workItem from="1606288833702" duration="3737000" />
       <workItem from="1606655411722" duration="72000" />
       <workItem from="1606665026068" duration="2342000" />
+      <workItem from="1607366312738" duration="8410000" />
+      <workItem from="1607425670856" duration="1916000" />
+      <workItem from="1607446967661" duration="7306000" />
+      <workItem from="1607498974162" duration="115000" />
     </task>
     <servers />
   </component>
@@ -255,10 +277,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="681" y="261" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1602084924731" />
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1606665025691">
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1607498973630">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606665025691" />
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1607498973630" />
     <state x="606" y="135" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1602263161540">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -267,10 +289,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="1247" y="212" width="673" height="738" key="com.jetbrains.php.test.PhpNewTestDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1604236606978" />
-    <state x="616" y="240" key="run.anything.popup" timestamp="1606665663782">
+    <state x="616" y="240" key="run.anything.popup" timestamp="1607453152876">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606665663782" />
+    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1607453152876" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1606291268489">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

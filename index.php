@@ -100,7 +100,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
 
         if (nonerror($errors)) {  //if there is no errors
             $user=$db->getUser($login); //check if there is an user with that login
-            if($user!=null){
+            var_dump($user);
+            if($user!="null"){
                 $errors['login']="There is user with this login. User another one!";
             }else{
                 if($hashType=="SHA512"){  //set hash type

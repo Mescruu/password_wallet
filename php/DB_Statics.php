@@ -1,9 +1,9 @@
 <?php
 
-function returnDecryptPassword($input_password, $input_session_password){
+function returnDecryptPassword($input_password, $decryptString){
 // decrypt the password from the "password" table using the encryption method from the config file and the user's password. 0 stands for OPENSSL_ZERO_PADDING
 // Returns the decrypted password
-    return  @openssl_decrypt($input_password, constant('cypherMethod'), $input_session_password, 0);
+    return  @openssl_decrypt($input_password, constant('cypherMethod'), $decryptString, 0);
 }
 
 

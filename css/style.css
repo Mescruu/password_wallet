@@ -11,7 +11,7 @@ body{
     background-image: url("../img/key.png");
     background-repeat: no-repeat;
     background-size: 20%; /* Resize the background image to cover the entire container */
-    height: 100vh;
+    height: 100%;
     background-position: bottom right;
 }
 
@@ -54,4 +54,29 @@ body{
     color: white; !important;
     font-weight: bold; !important;
 }
+
+.mode-alert-lock{
+    background-image: url("../img/lock.png");
+    background-repeat: no-repeat;
+    background-size: 100%; /* Resize the background image to cover the entire container */
+    background-position: center;
+}
+
+.mode-alert-unlock{
+
+    background-image: url("../img/unlock.png");
+    background-repeat: no-repeat;
+    background-size: 100%; /* Resize the background image to cover the entire container */
+    background-position: center;
+}
+
+.btn-circle.btn-xl {
+    width: 200px;
+    height: 200px;
+    padding: 10px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    text-align: center;
+}
+
 
