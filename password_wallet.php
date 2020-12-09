@@ -139,6 +139,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
         }
     }
 
+
+    if (isset($_REQUEST["Edit"])) {  // request to change user password
+
+        $id = test_input($_POST["id"]);
+
+
+        if (empty($_POST["login"])) { // check if the given "login" is empty. If true, write the appropriate error. If false, save the variable login
+            $login = "";
+            $errors['login'] = "Login is required";
+        } else {
+            $login = test_input($_POST["login"]);
+        }
+        if (empty($_POST["password"])) {//similar to the comment above
+            $password = "";
+            $errors['password'] = "Login is required";
+        } else {
+            $password = test_input($_POST["password"]);
+        }
+
+        $description = test_input($_POST["description"]); //save the website description
+
+        if (empty($_POST["web_address"])) { // check if the given "web_address" is empty. If true, write the appropriate error. If false, save the variable web_address
+            $web_address = "";
+            $errors['web_address'] = "Web address is required";
+        } else {
+            $web_address = test_input($_POST["web_address"]);
+        }
+
+        if (nonerror($errors)) { // if there is no errors
+            if($user==null){ // if there is no user in database with that data
+                $_SESSION['info'] = "Error - there is no user";
+            }else{
+                // create a partition with the following data: login to that website, password, website description, link, user id.
+                $_SESSION['info'] = $db->editPartition($id, $login, $password, $description, $web_address, $user->getId()); // returns information about task realization
+               // header('location:password_wallet.php');  // thanks to it, another partition is not added after refreshing the page.
+            }
+        }else{
+            $_SESSION['info'] = "Error - there is some problem with your data, check the window with editing form."; // if there are any errors with data given to the form
+        }
+
+    }
+
     if (isset($_REQUEST["Change"])) {  // request to change user password
         $wallet =false;
 

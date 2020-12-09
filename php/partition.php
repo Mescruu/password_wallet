@@ -138,8 +138,29 @@ class partition
                                                     <a class="btn btn-light m-1" href="http://'.$this->web_address.'" style="width: 150px;">
                                                         To the site  &#8594;
                                                     </a>
-                                                    
-                                                     <a class="btn btn-outline-light" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm">Share password</a>
+                                                                                                        
+                                                    ';
+                                                        if(isset($_SESSION['mode']) && $this->shared==false){
+                                                            if($_SESSION['mode']=='modify-mode') {
+                                                                echo '<a class="btn btn-outline-light" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm">Share password</a>';
+                                                            }else{
+                                                                echo '<a class="btn btn-outline-light disabled" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm">Share password</a>';
+                                                            }
+                                                        }else{
+                                                            echo '<a class="btn btn-outline-light disabled" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm">Share password</a>';
+                                                        }
+
+
+                                                    if(isset($_SESSION['mode']) && $this->shared==false){
+                                                        if($_SESSION['mode']=='modify-mode') {
+                                                            echo '<a class="btn btn-outline-light" data-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="shareForm">Edit password</a>';
+                                                        }else{
+                                                            echo '<a class="btn btn-outline-light disabled" data-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="shareForm">Edit password</a>';
+                                                        }
+                                                    }else{
+                                                        echo '<a class="btn btn-outline-light disabled" data-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="shareForm">Edit password</a>';
+                                                    }
+                                                    echo '
                                                     
                                                 </form>
 
@@ -158,11 +179,56 @@ class partition
                                                                 <label for="LoginInput">User login</label>
                                                                 <input type="login" name="Otherlogin" class="form-control btn btn-dark" id="LoginInput" aria-describedby="Login Input"  placeholder="Enter other user login">
                                                                 <hr>
-                                                                <input type="submit" name="Access" value="Share" class="m-auto form-control btn btn-dark" style="width: 150px;">
+                                                                <input type="submit" name="Access" value="Share" class="m-auto form-control btn btn-dark m-2" style="width: 150px;">
                                                       </div>
                                                     </div>
                                                 </form>
-                                                
+                                               
+                                               <form  action="password_wallet.php" method="post" class="text-center w-100" onsubmit="return confirm(';
+                                                        //if there is a mode sesssion value and user is owner
+                                                        if(isset($_SESSION['mode']) && $this->shared==false){
+                                                            if($_SESSION['mode']=='modify-mode') {
+                                                                echo '\'Are you sure? This operation can not be undone!\');">';
+                                                            }else{
+                                                                echo '\'You can not do this in read mode!\');">';
+                                                            }
+                                                        }else{
+                                                            echo '\'You are not the owner of this partition!\');">';
+                                                        }
+                                                        echo '
+                                                     <div class="collapse multi-collapse" id="editForm">
+                                                      <div class="card card-body w-100 px-5 text-center">
+                                                                 <input type="number" id="id" name="id" value="'.$this->id.'" style="display: none">
+                                                          
+                                                            <label for="login">Login</label>
+                                                            <input type="text" class="form-control" name="login" id="login" aria-describedby="Login" placeholder="Enter login" value="'.$this->login.'">
+                       
+                                                               <label for="password">Password</label>
+                                                                <input type="password" class="form-control" name="password" id="password" aria-describedby="password" placeholder="Enter password" value="">
+                       
+                                                                    <label for="web_address">Web address</label>
+                                                                    <input type="text" class="form-control" name="web_address" id="web_address" aria-describedby="web_address" placeholder="Enter web address" value="'.$this->web_address.'">
+                                                              
+                                                               <label for="description">Description</label>
+                                                               <input type="text" class="form-control mb-2" name="description" id="description" aria-describedby="description" placeholder="Enter description" value="'.$this->description.'">';
+                                                              
+                                                                //if there is a mode sesssion value and user is owner
+                                                                if(isset($_SESSION['mode']) && $this->shared==false){
+                                                                    if($_SESSION['mode']=='modify-mode') {
+                                                        
+                                                                        echo '<input type="submit" name="Edit" value="Edit" class="m-auto form-control btn btn-dark " style="width: 150px;">';
+                                                                    }else{
+                                                                        echo '<input type="submit" name="--" value="Edit" class="m-auto form-control btn btn-dark disabled" style="width: 150px;">';
+                                                                    }
+                                                                }else{
+                                                                    echo '<input type="submit" name="--" value="Edit" class="m-auto form-control btn btn-dark disabled" style="width: 150px;">';
+                                                                }
+                       echo '
+
+                                                      </div>
+                                                    </div>
+                                                </form>
+                                                 
                                              </div>
                                         </div>
                                     </div>

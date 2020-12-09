@@ -54,6 +54,24 @@ class BD {
         return "Position added";
     }
 
+    //function to edit partition
+    public  function  editPartition($id, $login, $password, $description, $web_address, $user_Id){
+        // encrypt the password using the encryption method in the config file and the user's login. 1 means OPENSSL_ZERO_PADDING
+        $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), constant('pepper').$_SESSION['login'], 0);
+
+        // call the insert function to the database
+        $update_sql = '
+        UPDATE `password`
+        SET `password` = "'.$encryptedPassword.'", `id_user` = "'.$user_Id.'", `web_address` = "'.$web_address.'", `description` = "'.$description.'", `login` = "'.$login.'"
+        WHERE id = '.$id.';
+        ';
+
+        $this->insert($update_sql);
+
+        //feedback
+        return "Position edited";
+    }
+
 // Get the appropriate partition. argument: the user id
     public function getPartition($userId){
     // SQL query for tabs with passwords of the given user
