@@ -338,7 +338,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                 <div class="carousel-item
             <?php if($wallet) echo "active"; ?>
                 " data-interval="false" id="loginBox">
-                    <h1 class="p-5 text-center mt-4">Welcom <?php echo $_SESSION['login']; ?> to your Password Wallet</h1>
+                    <h1 class="p-5 text-center mt-4">Welcome <?php echo $_SESSION['login']; ?> to your Password Wallet</h1>
                     <div class ="card-frame-password_wallet">
                         <div class="card text-center">
                             <div class="card-body">
@@ -384,14 +384,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                             </div>
                         </div>
 
+
                         <div class="text-center p-3">
-                            <a class="btn w-50 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="next"">
+                            <a class="btn w-25 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="prev"">
+                            <span class="" id="text">&#8592; Logs</span>
+                            </a>
+
+                            <a class="btn w-25 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="next"">
                             <span class="" id="text">Change Password &#8594;</span>
                             </a>
                         </div>
+
                     </div>
 
                 </div>
+
                 <div class="carousel-item
             <?php
                 if(!$wallet) {
@@ -467,7 +474,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                         </div>
 
                         <div class="text-center p-3">
-                            <a class="btn w-50 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="next"">
+                            <a class="btn w-25 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="prev"">
+                            <span class="" id="text">&#8592; Wallet</span>
+                            </a>
+
+                            <a class="btn w-25 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="next"">
+                            <span class="" id="text">Logs &#8594;</span>
+                            </a>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="carousel-item
+            <?php
+                if(!$wallet) {
+                    echo "active";
+                }
+                ?>
+            " data-interval="false">
+                    <h1 class="p-5 text-center  mt-4""><?php echo $_SESSION['login']; ?> check logs of application! </h1>
+
+                    <div class ="card-frame-password_wallet">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Logs of application</h5>
+                                <p class="card-text">Take a look and check what happend in your password wallet.</p>
+
+                                <hr>
+
+                                <div class="logs_table sticky-top">
+                                    <table class="table table-hover">
+                                        <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col">id</th>
+                                            <th scope="col">time</th>
+                                            <th scope="col">name of function</th>
+                                            <th scope="col">description</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php
+                                        //rows with logs
+                                        echo $db->showLogsOfFunctions();
+                                        ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center p-3">
+                            <a class="btn w-25 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="prev"">
+                            <span class="" id="text">&#8592; Change password</span>
+                            </a>
+
+                            <a class="btn w-25 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="next"">
                             <span class="" id="text">Wallet &#8594;</span>
                             </a>
                         </div>
@@ -476,6 +541,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                     </div>
 
                 </div>
+
+
             </div>
 
             <form action="password_wallet.php" method="GET" class="text-center mt-5">

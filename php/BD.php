@@ -21,11 +21,103 @@ class BD {
         $this->mysqli->close();
     }
 
+//get function id from exists or create new and recall function.
+public function getFunctionID($name){
+    //get function name and select id
+    $sql_call= "select id from function where function_name='$name'";
+
+    // execute the query
+    $result = $this->select($sql_call);
+
+    // if there is such a record
+    if ($result!=null&&$result->num_rows > 0) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+            $id = $row["id"]; // create a user object with the database fetched data.
+        }
+        return $id; // return the id of function object
+    } else {
+
+        //if there is no record like that - add new function name to database
+        $insert_function_sql = 'INSERT INTO `function` (`id`, `function_name`, `description`) VALUES (NULL, '.$name.', "there is no description")';
+        $this->insert($insert_function_sql);
+
+        //get id from database again after adding function name to the database.
+
+            //get function name and select id
+            $sql_call= "select id from function where function_name='$name'";
+
+            // execute the query
+            $result = $this->select($sql_call);
+
+        if ($result!=null&&$result->num_rows > 0) {
+            // output data of each row
+            while ($row = $result->fetch_assoc()) {
+                $id = $row["id"]; // create a user object with the database fetched data.
+            }
+            return $id;
+        }else{
+            return NULL;
+        }
+    }
+
+}
+
+//Register record when particular functions was called.
+public function registerFunctionCall($name, $user_id){
+
+    $function_id = $this->getFunctionID($name);
+   // $current_time = date('Y-m-d H:i:s');
+
+    if($function_id != NULL){
+        $insert_sql = 'INSERT INTO `function_run` (`id`, `id_user`, `time`, `id_function`) VALUES (NULL, '.$user_id.', current_timestamp(), '.$function_id.')';
+        $this->insert($insert_sql);
+
+        return "Record added!";
+    }
+    else{
+        return "Error! There is problem with register function calling.";
+    }
+}
+
+//show all logs of user
+public function showLogsOfFunctions(){
+
+        $user = $this->getUser($_SESSION['login']);
+    //register function call with function name from var_dump function and user id
+
+    // Query the record in the table "user" with the given login
+    $sql= 'select fr.id, fr.time, f.function_name, f.description from function_run fr
+            INNER JOIN function f
+            ON f.id = fr.id_function
+            where fr.id_user='.$user->getId().' ORDER BY 2 DESC';
+
+    //empty string
+    $table="";
+    // execute the query
+    $result = $this->select($sql);
+
+    // if there is such a record
+    if ($result!=null&&$result->num_rows > 0) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+            $table .= "<tr><td>".$row["id"]."</td><td>". $row["time"]."</td><td>".$row["function_name"]."</td><td>". $row["description"]."</td></tr>";
+        }
+        return $table; // return the table rows
+    } else {
+        return "null";// return null if there is no data.
+    }
+
+}
+
+
+
 // Function that creates a user object on the basis of data from the database / Argument: user login
     public function getUser($login)
     {
         // Query the record in the table "user" with the given login
         $sql= "select * from user where login='$login'";
+
 
         // execute the query
         $result = $this->select($sql);
@@ -43,6 +135,10 @@ class BD {
     }
 
     public  function  createPartition($login, $password, $description, $web_address, $user_Id){
+
+        //register function call with function name from var_dump function
+        $this->registerFunctionCall(__FUNCTION__, $user_Id);
+
         // encrypt the password using the encryption method in the config file and the user's login. 1 means OPENSSL_ZERO_PADDING
         $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), constant('pepper').$_SESSION['login'], 0);
 
@@ -52,10 +148,14 @@ class BD {
 
         //feedback
         return "Position added";
+
     }
 
     //function to edit partition
     public  function  editPartition($id, $login, $password, $description, $web_address, $user_Id){
+        //register function call with function name from var_dump function
+        $this->registerFunctionCall(__FUNCTION__, $user_Id);
+
         // encrypt the password using the encryption method in the config file and the user's login. 1 means OPENSSL_ZERO_PADDING
         $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), constant('pepper').$_SESSION['login'], 0);
 
@@ -74,6 +174,9 @@ class BD {
 
 // Get the appropriate partition. argument: the user id
     public function getPartition($userId){
+        //register function call with function name from var_dump function
+        $this->registerFunctionCall(__FUNCTION__, $userId);
+
     // SQL query for tabs with passwords of the given user
         $sql= "
            SELECT distinct * FROM password p
@@ -104,6 +207,10 @@ class BD {
 
 // Function that removes a record from the "password" table with the given id. Item id.
     public  function  deletePosition($id){
+        $user = $this->getUser($_SESSION['login']);
+        //register function call with function name from var_dump function and user id
+        $this->registerFunctionCall(__FUNCTION__, $user->getId());
+
         if($this->checkifuserisowner($id)){
 
             // Query removing the item from the portfolio and sharing
@@ -127,6 +234,11 @@ class BD {
 
     //check if user is password owner
     public function checkifuserisowner($id){
+
+        $user = $this->getUser($_SESSION['login']);
+        //register function call with function name from var_dump function and user id
+        $this->registerFunctionCall(__FUNCTION__, $user->getId());
+
         //take password owner login.
         $sql = '
         SELECT lower(u.login) as login FROM `password` p 

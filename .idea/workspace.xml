@@ -3,9 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="7efa11f9-d120-4ca4-aadc-cd31d3f4a2ac" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/password_wallet.php" beforeDir="false" afterPath="$PROJECT_DIR$/password_wallet.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/php/BD.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/BD.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/php/partition.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/partition.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,7 +186,9 @@
       <workItem from="1607366312738" duration="8410000" />
       <workItem from="1607425670856" duration="1916000" />
       <workItem from="1607446967661" duration="7306000" />
-      <workItem from="1607498974162" duration="3129000" />
+      <workItem from="1607498974162" duration="3222000" />
+      <workItem from="1607503090590" duration="766000" />
+      <workItem from="1609181154713" duration="5174000" />
     </task>
     <servers />
   </component>
@@ -202,6 +204,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="1247" y="88" key="#PHP/0.0.1920.1040@0.0.1920.1040" timestamp="1604236821598" />
+    <state x="552" y="179" key="#SQL_Dialects" timestamp="1609182279902">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="179" key="#SQL_Dialects/0.0.1920.1040@0.0.1920.1040" timestamp="1609182279902" />
     <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1606136223939">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -274,10 +280,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="681" y="261" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1602084924731" />
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1607498973630">
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog" timestamp="1609181265898">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1607498973630" />
+    <state x="656" y="344" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1609181265898" />
     <state x="606" y="135" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1602263161540">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -286,14 +292,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="1247" y="212" width="673" height="738" key="com.jetbrains.php.test.PhpNewTestDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1604236606978" />
-    <state x="616" y="240" key="run.anything.popup" timestamp="1607453152876">
+    <state x="616" y="240" key="run.anything.popup" timestamp="1609182071140">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1607453152876" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1606291268489">
+    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1609182071140" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1609182409573">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1606291268489" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1609182409573" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/password_wallet@BDTest.xml" NAME="BDTest Coverage Results" MODIFIED="1606139321962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="PhpCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
