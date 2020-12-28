@@ -79,4 +79,69 @@ body{
     text-align: center;
 }
 
+.logs_table{
+    max-height: 550px;
+    height: 100%;
+    overflow: scroll;
+    overflow-x: scroll;
+}
+
+.carousel-button{
+    width: 20%;
+    margin: auto;
+}
+
+.carousel-item h1{
+    height: 200px;
+}
+
+.col1{
+    width: 10%;
+}
+.col2{
+    width: 20%;
+}
+.col3{
+    width: 20%;
+}
+.col4{
+    width: 35%;
+}
+.col5{
+    width: 15%;
+}
+
+.no{
+    width: 5%;
+}
+.column_previous{
+    width: 30%;
+}
+.column_present{
+    width: 30%;
+}
+.column_time{
+    width: 10%;
+}
+.column_type{
+    width: 10%;
+}
+.column_recover {
+    width: 10%;
+}
+.colempty{
+    width: 10px;
+}
+
+.form-check-label{
+    font-size: 20px;
+}
+
+.modal-dialog{
+    max-width: 80% !important;
+    height: 80vh;
+    max-height: 80vh !important;
+    width: 100%;
+    overflow: auto !important;
+}
 

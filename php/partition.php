@@ -1,5 +1,8 @@
 <?php
 
+include_once('php/BD.php');// database class
+include_once ('php/config.php');// database configuration file;
+
 class partition
 {
     private $id = null;
@@ -103,66 +106,83 @@ class partition
                                               </tbody>
                                             </table>
                                             <br>   
-                                            <div class="w-100 d-flex justify-content-center mb-3">
+                                            <div class="w-100 d-flex flex-wrap align-content-center justify-content-between mb-3">
                                             <!--Divided into two forms to create confirmation system to delete record quickly-->
-                                                <form action="password_wallet.php" method="post" class="text-center d-inline" onsubmit="return confirm(';
+                                                <form action="password_wallet.php" method="post" class="m-1" onsubmit="return confirm(';
                                                     //if there is a mode sesssion value and user is owner
                                                     if(isset($_SESSION['mode']) && $this->shared==false){
                                                         if($_SESSION['mode']=='modify-mode') {
                                                             echo '\'Are you sure? This operation can not be undone!\');">\'';
 
-                                                            echo '<input type="submit" name="Delete" value="Delete" class="btn btn-danger m-1" style="width: 150px;">';
+                                                            echo '<input type="submit" name="Delete" value="Delete" class="btn btn-danger" style="width: 100px; height: 70px;">';
                                                         }else{
                                                             echo '\'You can not do this in read mode!\');">\'';
 
-                                                            echo '<input type="submit" name="--" value="Delete" class="btn btn-danger m-1 disabled" style="width: 150px;">';
+                                                            echo '<input type="submit" name="--" value="Delete" class="btn btn-danger disabled" style="width: 100px; height: 70px;">';
                                                         }
                                                     }else{
                                                         echo '\'You are not the owner of this partition!\');">\'';
 
-                                                        echo '<input type="submit" name="--" value="Delete" class="btn btn-danger m-1 disabled" style="width: 150px;">';
+                                                        echo '<input type="submit" name="--" value="Delete" class="btn btn-dangerdisabled" style="width: 100px; height: 70px;">';
                                                     }
 
                                              echo '
                                                    <input type="number" id="id" name="id" value="'.$this->id.'" style="display: none">
                                                 </form>
-                                                <form  action="password_wallet.php" method="post" class="text-center d-inline">
+                                                <form  action="password_wallet.php" class="m-1" method="post">
                                                     <input type="number" id="id" name="id" value="'.$this->id.'" style="display: none">';
                                                     if($decrypt==""){ //if decrypt variable is empty display button which allows user to decrypt the password
-                                                        echo '<input type="submit" name="Show" value="Show" class="btn btn-outline-light m-1" style="width: 150px;">';
+                                                        echo '<input type="submit" name="Show" value="Show" class="btn btn-outline-light" style="width: 100px; height: 70px;">';
                                                     }else{
-                                                        echo '<input type="submit" name="Hide" value="Hide" class="btn btn-outline-light m-1" style="width: 150px;">';
+                                                        echo '<input type="submit" name="Hide" value="Hide" class="btn btn-outline-light" style="width: 100px; height: 70px;">';
                                                     }
                                                     echo '
-                                                    
-                                                    <a class="btn btn-light m-1" href="http://'.$this->web_address.'" style="width: 150px;">
+                                               </form>
+  
+                                                    <a class="btn btn-light m-1" href="http://'.$this->web_address.'"  style="width: 100px; height: 70px;">
                                                         To the site  &#8594;
                                                     </a>
-                                                                                                        
+                                                                              
                                                     ';
                                                         if(isset($_SESSION['mode']) && $this->shared==false){
                                                             if($_SESSION['mode']=='modify-mode') {
-                                                                echo '<a class="btn btn-outline-light" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm">Share password</a>';
+                                                                echo '<a class="btn btn-outline-light m-1" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm" style="width: 100px; height: 70px;">Share password</a>';
                                                             }else{
-                                                                echo '<a class="btn btn-outline-light disabled" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm">Share password</a>';
+                                                                echo '<a class="btn btn-outline-light disabled m-1" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm" style="width: 100px; height: 70px;">Share password</a>';
                                                             }
                                                         }else{
-                                                            echo '<a class="btn btn-outline-light disabled" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm">Share password</a>';
+                                                            echo '<a class="btn btn-outline-light disabled m-1" data-toggle="collapse" href="#shareForm" role="button" aria-expanded="false" aria-controls="shareForm"  style="width: 100px; height: 70px;">Share password</a>';
                                                         }
 
 
                                                     if(isset($_SESSION['mode']) && $this->shared==false){
                                                         if($_SESSION['mode']=='modify-mode') {
-                                                            echo '<a class="btn btn-outline-light" data-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="shareForm">Edit password</a>';
+                                                            echo '<a class="btn btn-outline-light m-1" data-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="shareForm" style="width: 100px; height: 70px;">Edit password</a>';
                                                         }else{
-                                                            echo '<a class="btn btn-outline-light disabled" data-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="shareForm">Edit password</a>';
+                                                            echo '<a class="btn btn-outline-light disabled m-1" data-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="shareForm" style="width: 100px; height: 70px;"">Edit password</a>';
                                                         }
                                                     }else{
-                                                        echo '<a class="btn btn-outline-light disabled" data-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="shareForm">Edit password</a>';
+                                                        echo '<a class="btn btn-outline-light disabled m-1" data-toggle="collapse" href="#editForm" role="button" aria-expanded="false" aria-controls="shareForm" style="width: 100px; height: 70px;">Edit password</a>';
                                                     }
+
+                                                    if(isset($_SESSION['mode']) && $this->shared==false){
+                                                        if($_SESSION['mode']=='modify-mode') {
+                                                            echo '<button type="button" class="btn btn-outline-light m-1" data-toggle="modal" data-target="#exampleModal'.$this->id.'" style="width: 100px; height: 70px;">
+                                                         Data changes
+                                                        </button>';
+                                                        }else{
+                                                            echo '<button type="button" class="btn btn-outline-light disabled m-1"style="width: 100px; height: 70px;">
+                                                         Data changes
+                                                        </button>';
+                                                        }
+                                                    }else{
+                                                        echo '<button type="button" class="btn btn-outline-light disabled m-1" style="width: 100px; height: 70px;">
+                                                         Data changes
+                                                        </button>';
+                                                    }
+
                                                     echo '
                                                     
-                                                </form>
 
                                             </div>                                         
                                             
@@ -227,11 +247,58 @@ class partition
 
                                                       </div>
                                                     </div>
-                                                </form>
-                                                 
+                                                </form>      
                                              </div>
                                         </div>
                                     </div>
+                                    
+                                    <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal'.$this->id.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                          <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLongTitle">Table</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                              </div>
+                                              <div class="modal-body">
+
+                                                <table class="table table-hover mb-0">
+                                                        <thead class="thead-dark">
+                                                        <tr>
+                                                            <th scope="col" class="no">No</th>
+                                                            <th scope="col" class="column_previous">previous data</th>
+                                                            <th scope="col" class="column_present">present data</th>
+                                                            <th scope="col" class="column_time">time</th>
+                                                            <th scope="col" class="column_type">type of action</th>
+                                                            <th scope="col" class="column_recover">Recover button</th>
+
+                                                            <th scope="col" class="colempty"></th>
+                    
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                    
+                                                    <div class="logs_table sticky-top">
+                                                        <table class="table table-hover">
+                                                            <tbody>';
+                                                        echo $this->id;
+                                                            //rows with data changes
+                                                                $db = create_DB();//create db handler
+                                                                echo $db->showDataChanges($db->getUser($_SESSION['login'])->getId(), $this->id);
+
+                                                            echo '</tbody>
+                                                        </table>
+                                                    </div>
+
+                                              </div>
+                                              <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
              ';
     }
 }

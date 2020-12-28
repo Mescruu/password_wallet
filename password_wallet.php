@@ -59,6 +59,12 @@ if (isset($_GET['Logout'])) { // if user logs out
                    }
     }
 
+    if (isset($_GET["data_change_id"])) // request to recover data from record with id..
+    {
+        $_SESSION['info'] = $db->recoverData($_GET["data_change_id"]); // returns information about task realization
+        header('location:password_wallet.php');  // thanks to it, another partition is not added after refreshing the page.
+    }
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
 
     if (isset($_REQUEST["Save"])) // request to create  new partition to the wallet
@@ -338,7 +344,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                 <div class="carousel-item
             <?php if($wallet) echo "active"; ?>
                 " data-interval="false" id="loginBox">
-                    <h1 class="p-5 text-center mt-4">Welcom <?php echo $_SESSION['login']; ?> to your Password Wallet</h1>
+                    <h1 class="p-5 text-center mt-4">Welcome <?php echo $_SESSION['login']; ?> to your Password Wallet</h1>
                     <div class ="card-frame-password_wallet">
                         <div class="card text-center">
                             <div class="card-body">
@@ -381,17 +387,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                                     Add new posistion
                                 </button>
 
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModal">
+                                    Database changes
+                                </button>
+
+
                             </div>
                         </div>
 
-                        <div class="text-center p-3">
-                            <a class="btn w-50 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="next"">
-                            <span class="" id="text">Change Password &#8594;</span>
-                            </a>
-                        </div>
+
                     </div>
 
                 </div>
+
                 <div class="carousel-item
             <?php
                 if(!$wallet) {
@@ -466,17 +475,190 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                             </div>
                         </div>
 
-                        <div class="text-center p-3">
-                            <a class="btn w-50 btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide="next"">
-                            <span class="" id="text">Wallet &#8594;</span>
-                            </a>
+                    </div>
+
+                </div>
+
+
+                <div class="carousel-item
+            <?php
+                if(!$wallet) {
+                    echo "active";
+                }
+                ?>
+            " data-interval="false">
+                    <h1 class="p-5 text-center  mt-4""><?php echo $_SESSION['login']; ?> check logs of application! </h1>
+
+                    <div class ="card-frame-password_wallet">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Logs of application</h5>
+                                <p class="card-text">Take a look and check what happend in your password wallet.</p>
+
+                                <hr>
+                                <table class="table table-hover mb-0">
+                                    <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col" class="col1">id</th>
+                                        <th scope="col" class="col2">time</th>
+                                        <th scope="col" class="col3">name of function</th>
+                                        <th scope="col" class="col4">description</th>
+                                        <th scope="col" class="col5">
+
+                                            <!-- Default dropright button -->
+                                            <div class="btn-group dropright">
+                                                <button class="btn btn-outline-light" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                                    Action type
+                                                </button>
+                                            </div>
+
+                                        </th>
+                                        <th scope="col" class="colempty"></th>
+
+                                    </tr>
+                                    </thead>
+                                </table>
+
+                                <script type="text/javascript">
+                                    //display rows with checked type
+                                    function toggle() {
+                                        var aInputs = document.getElementsByClassName('form-check-input');
+                                        var rows=document.getElementsByTagName("tr");
+
+                                        //create
+                                        if(aInputs[0].checked){
+                                            for(var i=0;i<rows.length;i++){
+
+                                                if(rows[i].className == 'create') {
+                                                    rows[i].style.display = 'inline';
+                                                }
+                                            }
+                                        }else{
+                                            for(var i=0;i<rows.length;i++){
+
+                                                if(rows[i].className == 'create') {
+                                                    rows[i].style.display='none';
+                                                }
+                                            }
+                                        }
+                                        //read
+                                        if(aInputs[1].checked){
+                                            for(var i=0;i<rows.length;i++){
+
+                                                if(rows[i].className == 'read') {
+                                                    rows[i].style.display = 'inline';
+                                                }
+                                            }
+                                        }else{
+                                            for(var i=0;i<rows.length;i++){
+
+                                                if(rows[i].className == 'read') {
+                                                    rows[i].style.display='none';
+                                                }
+                                            }
+                                        }
+
+                                        //update
+                                        if(aInputs[2].checked){
+                                            for(var i=0;i<rows.length;i++){
+
+                                                if(rows[i].className == 'update') {
+                                                    rows[i].style.display = 'inline';
+                                                }
+                                            }
+                                        }else{
+                                            for(var i=0;i<rows.length;i++){
+
+                                                if(rows[i].className == 'update') {
+                                                    rows[i].style.display='none';
+                                                }
+                                            }
+                                        }
+
+                                        //delete
+                                        if(aInputs[3].checked){
+                                            for(var i=0;i<rows.length;i++){
+
+                                                if(rows[i].className == 'delete') {
+                                                    rows[i].style.display = 'inline';
+                                                }
+                                            }
+                                        }else{
+                                            for(var i=0;i<rows.length;i++){
+
+                                                if(rows[i].className == 'delete') {
+                                                    rows[i].style.display='none';
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                </script>
+
+                                <div class="collapse" id="collapseExample">
+                                    <div class="card card-body bg-white">
+                                        <div class="w-100  d-inline m-auto">
+                                            <div class="form-check-inline">
+                                                <input class="form-check-input" onClick='toggle(this)' type="checkbox" id="inlineCheckbox1" value="option1" checked>
+                                                <label class="form-check-label" for="inlineCheckbox1">create</label>
+                                            </div>
+
+                                            <div class="form-check-inline">
+                                                <input class="form-check-input" onClick='toggle(this)' type="checkbox" id="inlineCheckbox2" value="option2" checked>
+                                                <label class="form-check-label" for="inlineCheckbox2">read</label>
+                                            </div>
+
+                                            <div class="form-check-inline">
+                                                <input class="form-check-input" onClick='toggle(this)' type="checkbox" id="inlineCheckbox3" value="option3" checked>
+                                                <label class="form-check-label" for="inlineCheckbox3">update</label>
+                                            </div>
+
+                                            <div class="form-check-inline">
+                                                <input class="form-check-input" onClick='toggle(this)' type="checkbox" id="inlineCheckbox4" value="option3" checked>
+                                                <label class="form-check-label" for="inlineCheckbox3">delete</label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="logs_table sticky-top">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                        <?php
+                                        //rows with logs
+                                        echo $db->showLogsOfFunctions();
+                                        ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
 
 
                     </div>
 
                 </div>
+
             </div>
+
+            <!-- navigation -->
+            <div class="text-center p-3 nav-buttons">
+                <a class="btn carousel-button btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide-to="0">
+                    <span class="" id="text">Wallet</span>
+                </a>
+
+                <a class="btn carousel-button  btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide-to="1">
+                    <span class="" id="text">Change Password</span>
+                </a>
+
+                <a class="btn carousel-button btn-dark m-auto nextButton" href="#carouselExampleIndicators" id="click"  role="button" data-slide-to="2">
+                    <span class="" id="text">Functions logs</span>
+                </a>
+
+            </div>
+
+            <hr>
 
             <form action="password_wallet.php" method="GET" class="text-center mt-5">
                 <input type="submit" name="Logout" value="Logout" class="btn btn-outline-dark w-25 m-auto">
@@ -549,6 +731,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if this is a POST request
                 </div>
             </form>
 
+        </div>
+    </div>
+</div>
+
+<!-- Table Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="tableModalAllLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Table</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <table class="table table-hover mb-0">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" class="no">No</th>
+                        <th scope="col" class="column_previous">previous data</th>
+                        <th scope="col" class="column_present">present data</th>
+                        <th scope="col" class="column_time">time</th>
+                        <th scope="col" class="column_type">type of action</th>
+                        <th scope="col" class="column_recover">Recover button</th>
+
+                        <th scope="col" class="colempty"></th>
+
+                    </tr>
+                    </thead>
+                </table>
+
+                <div class="logs_table sticky-top">
+                    <table class="table table-hover">
+                        <tbody>
+                        <?php
+                        //rows with logs
+                        echo $db->showDataChanges($db->getUser($_SESSION['login'])->getId(), null);
+                        ?>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark btn-block" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>

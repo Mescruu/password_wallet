@@ -21,11 +21,103 @@ class BD {
         $this->mysqli->close();
     }
 
+//get function id from exists or create new and recall function.
+public function getFunctionID($name){
+    //get function name and select id
+    $sql_call= "select id from function where function_name='$name'";
+
+    // execute the query
+    $result = $this->select($sql_call);
+
+    // if there is such a record
+    if ($result!=null&&$result->num_rows > 0) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+            $id = $row["id"]; // create a user object with the database fetched data.
+        }
+        return $id; // return the id of function object
+    } else {
+
+        //if there is no record like that - add new function name to database
+        $insert_function_sql = 'INSERT INTO `function` (`id`, `function_name`, `description`) VALUES (NULL, '.$name.', "there is no description")';
+        $this->insert($insert_function_sql);
+
+        //get id from database again after adding function name to the database.
+
+            //get function name and select id
+            $sql_call= "select id from function where function_name='$name'";
+
+            // execute the query
+            $result = $this->select($sql_call);
+
+        if ($result!=null&&$result->num_rows > 0) {
+            // output data of each row
+            while ($row = $result->fetch_assoc()) {
+                $id = $row["id"]; // create a user object with the database fetched data.
+            }
+            return $id;
+        }else{
+            return NULL;
+        }
+    }
+
+}
+
+//Register record when particular functions was called.
+public function registerFunctionCall($name, $user_id, $type){
+
+    $function_id = $this->getFunctionID($name);
+   // $current_time = date('Y-m-d H:i:s');
+
+    if($function_id != NULL){
+        $insert_sql = 'INSERT INTO `function_run` (`id`, `id_user`, `time`, `id_function`, `id_action_type`) VALUES (NULL, '.$user_id.', current_timestamp(), '.$function_id.', '.$type.')';
+        $this->insert($insert_sql);
+
+        return "Record added!";
+    }
+    else{
+        return "Error! There is problem with register function calling.";
+    }
+}
+
+//show all logs of user
+public function showLogsOfFunctions(){
+        $user = $this->getUser($_SESSION['login']);
+    //register function call with function name from var_dump function and user id
+
+    // Query the record in the table "user" with the given login
+    $sql= 'select fr.id, fr.time, f.function_name, f.description, a.title from function_run fr
+            INNER JOIN function f
+            ON f.id = fr.id_function
+                        INNER JOIN action_type a
+                        ON a.id = fr.id_action_type
+            where fr.id_user='.$user->getId().' ORDER BY 2 DESC';
+
+    //empty string
+    $table="";
+    // execute the query
+    $result = $this->select($sql);
+
+    // if there is such a record
+    if ($result!=null&&$result->num_rows > 0) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+            $table .= "<tr class=".$row["title"]."><td class='col1'>".$row["id"]."</td><td class='col2'>". $row["time"]."</td><td class='col3'>".$row["function_name"]."</td><td class='col4'>". $row["description"]."</td><td class='col5'>". $row["title"]."</td></tr>";
+        }
+        return $table; // return the table rows
+    } else {
+        return "null";// return null if there is no data.
+    }
+}
+
+
+
 // Function that creates a user object on the basis of data from the database / Argument: user login
     public function getUser($login)
     {
         // Query the record in the table "user" with the given login
         $sql= "select * from user where login='$login'";
+
 
         // execute the query
         $result = $this->select($sql);
@@ -43,19 +135,42 @@ class BD {
     }
 
     public  function  createPartition($login, $password, $description, $web_address, $user_Id){
+
+        //register function call with function name from var_dump function
+        $this->registerFunctionCall(__FUNCTION__, $user_Id, constant('create'));
+
+
         // encrypt the password using the encryption method in the config file and the user's login. 1 means OPENSSL_ZERO_PADDING
         $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), constant('pepper').$_SESSION['login'], 0);
 
         // call the insert function to the database
-        $insert_sql = 'INSERT INTO `password` (`id`, `password`, `id_user`, `web_address`, `description`,`login`) VALUES (NULL, "'.$encryptedPassword.'", "'.$user_Id.'", "'.$web_address.'", "'.$description.'", "'.$login.'");';
+        $insert_sql = 'INSERT INTO `password` (`id`, `password`, `id_user`, `web_address`, `description`,`login`,`deleted`) VALUES (NULL, "'.$encryptedPassword.'", "'.$user_Id.'", "'.$web_address.'", "'.$description.'", "'.$login.'", 0);';
+
+        //return las id
         $this->insert($insert_sql);
 
+        $last_id = $this->mysqli->insert_id;
+
+        //register new data change log
+        $table_name = "password";
+
+        //there is no value, because the partition was created right now
+        $previous_value_of_record = null;
+
+        //there is 0 on the end because record is not deleted
+        $present_value_of_record = $encryptedPassword."|".$user_Id."|".$web_address."|".$description."|".$login;
+
+        $this->registerDataChange( $user_Id, $table_name, $last_id,  $previous_value_of_record, $present_value_of_record, constant('create'));
+
+        return "Position added.";
         //feedback
-        return "Position added";
     }
 
     //function to edit partition
     public  function  editPartition($id, $login, $password, $description, $web_address, $user_Id){
+        //register function call with function name from var_dump function
+        $this->registerFunctionCall(__FUNCTION__, $user_Id, constant('update'));
+
         // encrypt the password using the encryption method in the config file and the user's login. 1 means OPENSSL_ZERO_PADDING
         $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), constant('pepper').$_SESSION['login'], 0);
 
@@ -66,19 +181,38 @@ class BD {
         WHERE id = '.$id.';
         ';
 
+        //take from database partition values.
+        $partition = $this->getOnePartition($id);
+
+    //Register data change block
+        //register new data change log
+        $table_name = "password";
+
+        //there is values from record before updating (0 because is not deleted)
+        $previous_value_of_record = $partition->getPassword()."|".$partition->getId_User()."|".$partition->getWeb_Address()."|".$partition->getDescription()."|".$partition->getLogin()."|0";
+
+        //there is 0 on the end because record is not deleted
+        $present_value_of_record = $encryptedPassword."|".$user_Id."|".$web_address."|".$description."|".$login."|0";
+
+
+        $this->registerDataChange( $user_Id, $table_name, $id,  $previous_value_of_record, $present_value_of_record, constant('update'));
+//Register data change block
         $this->insert($update_sql);
 
         //feedback
-        return "Position edited";
+        return "Position edited.";
     }
 
 // Get the appropriate partition. argument: the user id
     public function getPartition($userId){
+        //register function call with function name from var_dump function
+        $this->registerFunctionCall(__FUNCTION__, $userId, constant('read'));
+
     // SQL query for tabs with passwords of the given user
         $sql= "
            SELECT distinct * FROM password p
-            WHERE p.id in (SELECT id_password FROM sharing WHERE id_user_taking = ".$userId." OR id_user_giving = ".$userId.")
-                OR p.id_user = ".$userId;
+            WHERE (p.id in (SELECT id_password FROM sharing WHERE id_user_taking = ".$userId." OR id_user_giving = ".$userId.")
+                OR p.id_user = ".$userId.") AND deleted = 0 ";
 
         // execute the query
         $result = $this->select($sql);
@@ -102,31 +236,143 @@ class BD {
         }
     }
 
+    // Get the appropriate partition. argument: the user id
+    public function getOnePartition($id){
+
+        $userId = $this->getUser($_SESSION['login'])->getId();
+
+        //register function call with function name from var_dump function
+        $this->registerFunctionCall(__FUNCTION__, $userId, constant('read'));
+
+        // SQL query for tabs with passwords of the given user
+        $sql= "
+           SELECT distinct * FROM password p
+            WHERE p.id in (SELECT id_password FROM sharing WHERE id_user_taking = ".$userId." OR id_user_giving = ".$userId.")
+                OR p.id = ".$id;
+
+        // execute the query
+        $result = $this->select($sql);
+        if ($result->num_rows > 0) {
+            // output data of each row
+            while($row = $result->fetch_assoc()) {
+
+                //if user is owner of that password
+                $sharedOrNot = false;
+                //if password was shared to the user
+                if($row["id_user"]!=$userId){
+                    $sharedOrNot = true;
+                }
+
+                $partition = new partition($row["id"],  $row["password"], $row["id_user"], $row["web_address"], $row["description"], $row["login"], $sharedOrNot);
+            }
+            return $partition; // return the array of partition.
+
+        } else {
+            return null;
+        }
+    }
+
+    /*
 // Function that removes a record from the "password" table with the given id. Item id.
+            public  function  deletePosition($id){
+                $user = $this->getUser($_SESSION['login']);
+                //register function call with function name from var_dump function and user id
+                $this->registerFunctionCall(__FUNCTION__, $user->getId(), constant('delete'));
+
+                if($this->checkifuserisowner($id)){
+
+                //sharing deleting is disable right now because of feature - recover data
+                //   // Query removing the item from the portfolio and sharing
+                //    $sql= "DELETE from sharing where id_password='$id;'";
+
+                    $sql2= "DELETE from password where id='$id;'";
+
+                    $partition = $this->getOnePartition($id);
+
+        // SQL execution
+        //            $this->mysqli->query($sql);
+
+        // SQL execution
+                    if ($this->mysqli->query($sql2) === TRUE) {
+
+                        //register new data change log
+                        $table_name = "password";
+
+                        //there is values from record before updating
+                        $previous_value_of_record = $partition->getPassword()."|".$partition->getId_User()."|".$partition->getWeb_Address()."|".$partition->getDescription()."|".$_SESSION['login']."|1";
+
+                        //there is "deleted" because record is  deleted
+                        $present_value_of_record = "deleted";
+
+                        $this->registerDataChange( $user->getId(), $table_name, $id,  $previous_value_of_record, $present_value_of_record, constant('delete'));
+        //Register data change block
+
+
+                        return "Position removed"."\n";
+                    } else {
+                        return "Position was not removed". $this->mysqli->error;
+                    }
+                }else{
+                    return "You are not an owner!"."\n";
+
+                }
+            }
+    */
+
+    //function to edit partition
     public  function  deletePosition($id){
+        $user_Id = $this->getUser($_SESSION['login'])->getId();
+        //register function call with function name from var_dump function
+        $this->registerFunctionCall(__FUNCTION__, $user_Id, constant('update'));
+
+        $user = $this->getUser($_SESSION['login']);
+        //register function call with function name from var_dump function and user id
+        $this->registerFunctionCall(__FUNCTION__, $user->getId(), constant('delete'));
+
         if($this->checkifuserisowner($id)){
 
-            // Query removing the item from the portfolio and sharing
-            $sql= "DELETE from sharing where id_password='$id;'";
-            $sql2= "DELETE from password where id='$id;'";
 
-// SQL execution
-            $this->mysqli->query($sql);
+        // call the insert function to the database
+        $update_sql = '
+        UPDATE `password`
+        SET `deleted` = "1"
+        WHERE id = '.$id.';
+        ';
 
-// SQL execution
-            if ($this->mysqli->query($sql2) === TRUE) {
-                return "Position removed"."\n";
-            } else {
-                return "Position was not removed". $this->mysqli->error;
-            }
+        //take from database partition values.
+        $partition = $this->getOnePartition($id);
+
+        $this->insert($update_sql);
+
+
+        //Register data change block
+        //register new data change log
+        $table_name = "password";
+
+        //there is values from record before updating (0 because is not deleted)
+        $previous_value_of_record = $partition->getPassword()."|".$partition->getId_User()."|".$partition->getWeb_Address()."|".$partition->getDescription()."|".$_SESSION['login']."|0";
+
+        $present_value_of_record = "deleted";
+
+        $this->registerDataChange( $user_Id, $table_name, $id,  $previous_value_of_record, $present_value_of_record, constant('delete'));
+        //Register data change block
+
+            //feedback
+            return "Position deleted.";
         }else{
             return "You are not an owner!"."\n";
 
         }
+
     }
 
     //check if user is password owner
     public function checkifuserisowner($id){
+
+        $user = $this->getUser($_SESSION['login']);
+        //register function call with function name from var_dump function and user id
+        $this->registerFunctionCall(__FUNCTION__, $user->getId(), constant('read'));
+
         //take password owner login.
         $sql = '
         SELECT lower(u.login) as login FROM `password` p 
@@ -147,6 +393,205 @@ class BD {
             }
         }
     }
+
+    //insert what was changed to database
+    public function registerDataChange( $user_Id, $table_name, $record_id,  $previous_value_of_record, $present_value_of_record, $action_type){
+
+        // call the insert function to the database
+        $insert_sql = 'INSERT INTO `data_change` (`id`, `id_user`, `table_name`, `id_message_record`, `previous_value_of_record`, `present_value_of_record`,`time`,`id_action_type`) 
+                        VALUES (NULL, "'.$user_Id.'", "'.$table_name.'", "'.$record_id.'", "'.$previous_value_of_record.'", "'.$present_value_of_record.'", current_timestamp(), "'.$action_type.'");';
+
+        $this->insert($insert_sql);
+
+        //feedback
+        return $insert_sql;
+    }
+
+    //recover data..
+    public function recoverData($row_id){
+        $sql = 'SELECT * FROM `data_change` WHERE id = '.$row_id;
+        $result = $this->select($sql);
+        if ($result!=null && $result->num_rows == 1) {
+            $row = $result->fetch_assoc();
+
+            //if returned data is from deleted row
+            if($row['id_action_type']==constant('delete')){
+
+                    // call the insert function to the database
+                     $update_sql = '
+                    UPDATE `password`
+                    SET `deleted` = "0"
+                    WHERE id = '.$row['id_message_record'].';';
+
+                    //take from database partition values.
+                    $partition = $this->getOnePartition($row['id_message_record']);
+
+                    $this->insert($update_sql);
+
+
+                    //Register data change block
+                    //register new data change log
+                    $table_name = "password";
+
+                    $previous_value_of_record = "deleted";
+
+                    $present_value_of_record = $partition->getPassword()."|".$partition->getId_User()."|".$partition->getWeb_Address()."|".$partition->getDescription()."|".$_SESSION['login']."|0";
+
+                    $this->registerDataChange(($this->getUser($_SESSION['login'])->getId()), $table_name, $row['id_message_record'],  $previous_value_of_record, $present_value_of_record, constant('create'));
+                    //Register data change block
+
+                    //feedback
+                    return "Position reupdated.";
+            }
+
+            //if returned data is from deleted row
+            if($row['id_action_type']==constant('update')) {
+                $partition = $this->getOnePartition($row['id_message_record']);
+
+
+                //Register data change block
+
+                //register new data change log
+                $table_name = "password";
+
+                //there is values from record before updating (0 because is not deleted)
+
+                $previous_value_of_record = $partition->getPassword()."|".$partition->getId_User()."|".$partition->getWeb_Address()."|".$partition->getDescription()."|".$_SESSION['login']."|0";
+
+                $array = explode("|", $row["previous_value_of_record"]);
+
+                // call the insert function to the database
+                $update_sql = '
+                UPDATE `password`
+                SET `password` = "'.$array[0].'", `id_user` = "'.$array[1].'", `web_address` = "'.$array[2].'", `description` = "'.$array[3].'", `login` = "'.$array[4].'", `deleted` = "0"
+                WHERE id = '.$row['id_message_record'].';
+                ';
+
+                //take from database partition values.
+                $partition = $this->getOnePartition($row['id_message_record']);
+
+                $this->insert($update_sql);
+
+                $present_value_of_record = $array[0]."|".$array[1]."|".$array[2]."|".$array[3]."|".$array[4]."|0";
+
+                $this->registerDataChange(($this->getUser($_SESSION['login'])->getId()), $table_name, $row['id_message_record'],  $previous_value_of_record, $present_value_of_record, constant('update'));
+                //Register data change block
+
+                return "Position recover.";
+            }
+
+            //if returned data is from deleted row
+            if($row['id_action_type']==constant('create')) {
+                $partition = $this->getOnePartition($row['id_message_record']);
+
+                //Register data change block
+
+                //register new data change log
+                $table_name = "password";
+
+                //there is values from record before updating (0 because is not deleted)
+                $previous_value_of_record = $partition->getPassword()."|".$partition->getId_User()."|".$partition->getWeb_Address()."|".$partition->getDescription()."|".$_SESSION['login']."|0";
+
+                $array = explode("|", $row["present_value_of_record"]);
+
+                // call the insert function to the database
+                $update_sql = '
+                UPDATE `password`
+                SET `password` = "'.$array[0].'", `id_user` = "'.$array[1].'", `web_address` = "'.$array[2].'", `description` = "'.$array[3].'", `login` = "'.$array[4].'", `deleted` = "0"
+                WHERE id = '.$row['id_message_record'].';
+                ';
+
+                $this->insert($update_sql);
+
+                $present_value_of_record = $array[0]."|".$array[1]."|".$array[2]."|".$array[3]."|".$array[4]."|0";
+
+                $this->registerDataChange(($this->getUser($_SESSION['login'])->getId()), $table_name, $row_id,  $previous_value_of_record, $present_value_of_record, constant('update'));
+                //Register data change block
+
+                return "Position recreate.";
+            }
+
+       }
+
+    }
+    //show data
+    public function showDataChanges($user_Id, $record_id){
+
+        $sql = "";
+        $output = "";
+
+        if($user_Id != null){
+            $sql = 'SELECT d.id, d.id_user, d.id_message_record, d.previous_value_of_record, d.present_value_of_record, d.time, a.title FROM `data_change` d INNER JOIN action_type a ON d.id_action_type = a.id WHERE id_user = '.$user_Id;
+        }
+        if($record_id != null){
+            $sql = 'SELECT d.id, d.id_user, d.id_message_record, d.previous_value_of_record, d.present_value_of_record, d.time, a.title FROM `data_change` d INNER JOIN action_type a ON d.id_action_type = a.id WHERE id_message_record = '.$record_id;
+        }
+
+        $index=0;
+        // execute the query
+        $result = $this->select($sql);
+        if ($result->num_rows > 0) {
+            // output data of each row
+            while($row = $result->fetch_assoc()) {
+
+                $index++;
+
+
+
+                    $output .= '<tr class="'.$row["title"].'">';
+
+                    $array = explode("|", $row["previous_value_of_record"]);
+                    $output .='<td class="no">'.$index.'</td>';
+
+                    $output .='<td class="column_previous"><ul>';
+                    foreach ($array as $value){
+                        $output .= '<li>'.$value."</li>";
+                    }
+                    $output .="</ul></td>";
+
+
+                    $array = explode("|", $row["present_value_of_record"]);
+                    $output .='<td class="column_present"><ul>';
+                        foreach ($array as $value){
+                            $output .= '<li>'.$value."</li>";
+                        }
+                    $output .="</ul></td>";
+
+                    $output .= '<td class="column_time">'.$row["time"]."</td>";
+
+                    $output .= '<td class="column_type">'.$row["title"]."</td>";
+
+
+               // if($record_id!= null){
+
+                    $output .= '<td class="column_recover">
+                            <a class="btn btn-dark" href="password_wallet.php?data_change_id='.$row["id"].'" role="button">RECOVER <hr>';
+
+                    if($row["title"]=='create'){
+                        $output .= "from present data column";
+                    }
+                    if($row["title"]=='update'){
+                         $output .= "from previous data column";
+                    }
+                    if($row["title"]=='delete'){
+                        $output .= "from previous data column";
+                    }
+                    $output .= '</a>
+                    <td>';
+               // }
+
+                $output .= "</tr>";
+            }
+
+            return $output; // return the output value.
+
+        } else {
+            return "There is no data";
+        }
+
+    }
+
+
 
     public  function decryptPassword($id){
 // query for a password with a given id
