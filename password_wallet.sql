@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 09 Gru 2020, 09:28
+-- Czas generowania: 13 Sty 2021, 08:34
 -- Wersja serwera: 10.4.14-MariaDB
 -- Wersja PHP: 7.4.11
 
@@ -24,6 +24,264 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Struktura tabeli dla tabeli `action_type`
+--
+
+CREATE TABLE `action_type` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(30) NOT NULL,
+  `description` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Zrzut danych tabeli `action_type`
+--
+
+INSERT INTO `action_type` (`id`, `title`, `description`) VALUES
+(1, 'create', 'creating or adding new information'),
+(2, 'read', 'reading or displaying existing information'),
+(3, 'update', 'modifying or editing existing information'),
+(4, 'delete', 'removal of existing information');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `data_change`
+--
+
+CREATE TABLE `data_change` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `id_user` int(11) NOT NULL,
+  `table_name` varchar(30) NOT NULL,
+  `id_message_record` int(11) NOT NULL,
+  `previous_value_of_record` text DEFAULT NULL,
+  `present_value_of_record` text DEFAULT NULL,
+  `time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `id_action_type` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Zrzut danych tabeli `data_change`
+--
+
+INSERT INTO `data_change` (`id`, `id_user`, `table_name`, `id_message_record`, `previous_value_of_record`, `present_value_of_record`, `time`, `id_action_type`) VALUES
+(52, 42, 'password', 122, '', 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|adminLogin', '2020-12-31 13:21:53', 1),
+(53, 42, 'password', 52, 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|admin|0', 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|adminLogin|1', '2020-12-31 13:23:15', 3),
+(54, 42, 'password', 122, 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|adminLogin|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:23:39', 3),
+(55, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:27:34', 3),
+(56, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:27:50', 3),
+(57, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:29:17', 3),
+(58, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:29:51', 3),
+(59, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:30:42', 3),
+(60, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:31:02', 3),
+(61, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:32:40', 3),
+(62, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:33:42', 3),
+(63, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:35:36', 3),
+(64, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:37:21', 3),
+(65, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 13:38:19', 3),
+(66, 42, 'password', 123, '', 'NtHeGEOxRCrpIn3cbm0ETQ==|42|page.com|page blablabla|page', '2020-12-31 13:51:00', 1),
+(67, 42, 'password', 52, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|admin|0', 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|adminLogin|1', '2020-12-31 13:51:31', 3),
+(68, 40, 'password', 124, '', '5WXHPy544clP70UeDIAE1w==|40|test.com|test desc|test', '2020-12-31 13:53:33', 1),
+(69, 42, 'password', 122, 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|admin|0', 'deleted', '2020-12-31 13:53:55', 4),
+(70, 42, 'password', 122, 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|admin|0', 'deleted', '2020-12-31 13:54:02', 4),
+(71, 42, 'password', 122, 'deleted', 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|admin|0', '2020-12-31 13:56:34', 1),
+(72, 42, 'password', 122, 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|admin|0', 'deleted', '2020-12-31 13:56:38', 4),
+(73, 42, 'password', 122, 'deleted', 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|admin|0', '2020-12-31 13:57:05', 1),
+(74, 42, 'password', 122, 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|admin|0', 'deleted', '2020-12-31 13:59:45', 4),
+(75, 42, 'password', 122, 'UGSj3AFYCBgYQzVAI6vYHg==|42|admin.pl|admin page|admin|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 14:00:22', 3),
+(76, 42, 'password', 122, 'deleted', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|admin|0', '2020-12-31 14:00:33', 1),
+(77, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', 'srRyuo9tcpVE2T0Qc4DDVg==|42|cycha.pl|admin page|cycha|0', '2020-12-31 14:01:02', 3),
+(78, 42, 'password', 122, 'srRyuo9tcpVE2T0Qc4DDVg==|42|cycha.pl|admin page|admin|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 14:01:16', 3),
+(79, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|admin|0', 'deleted', '2020-12-31 14:02:45', 4),
+(80, 42, 'password', 122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|admin|0', 'srRyuo9tcpVE2T0Qc4DDVg==|42|cycha.pl|admin page|admin|0', '2020-12-31 14:02:57', 3),
+(81, 42, 'password', 122, 'srRyuo9tcpVE2T0Qc4DDVg==|42|cycha.pl|admin page|admin|0', 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=|42|admin.pl|admin page|adminLogin-updated|0', '2020-12-31 14:04:18', 3),
+(82, 42, 'password', 123, 'NtHeGEOxRCrpIn3cbm0ETQ==|42|page.com|page blablabla|page|0', 'NtHeGEOxRCrpIn3cbm0ETQ==|42|page.com|page blablabla|pagepage|0', '2021-01-13 07:31:17', 3),
+(83, 42, 'password', 123, 'NtHeGEOxRCrpIn3cbm0ETQ==|42|page.com|page blablabla|admin|0', 'NtHeGEOxRCrpIn3cbm0ETQ==|42|page.com|page blablabla|page|0', '2021-01-13 07:31:54', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `function`
+--
+
+CREATE TABLE `function` (
+  `id` int(11) NOT NULL,
+  `function_name` varchar(30) NOT NULL,
+  `description` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Zrzut danych tabeli `function`
+--
+
+INSERT INTO `function` (`id`, `function_name`, `description`) VALUES
+(1, 'getPartition', 'Get the appropriate partition. Argument: the user id'),
+(2, 'editPartition', 'Function to edit partition. \r\n\r\nArgument: \r\n-password id\r\n-password login \r\n-user password\r\n-description\r\n-web address\r\n-user id'),
+(3, 'createPartition', 'Function to create partition\r\n\r\nArguments:\r\n-password login \r\n-user password\r\n-description\r\n-web address\r\n-user id'),
+(4, 'deletePosition', 'Function that removes a record from the \"password\" table with the given id. Item id.\r\n\r\nArguments:\r\n-password id'),
+(5, 'checkifuserisowner', 'Check if user is password owner\r\n\r\nArguments:\r\n-password id');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `function_run`
+--
+
+CREATE TABLE `function_run` (
+  `id` int(11) NOT NULL,
+  `id_user` int(11) NOT NULL,
+  `time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `id_function` int(11) NOT NULL,
+  `id_action_type` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Zrzut danych tabeli `function_run`
+--
+
+INSERT INTO `function_run` (`id`, `id_user`, `time`, `id_function`, `id_action_type`) VALUES
+(407, 42, '2020-12-31 13:22:47', 1, 2),
+(408, 42, '2020-12-31 13:22:56', 1, 2),
+(409, 42, '2020-12-31 13:23:15', 1, 2),
+(410, 42, '2020-12-31 13:23:15', 1, 2),
+(411, 42, '2020-12-31 13:23:39', 2, 3),
+(412, 42, '2020-12-31 13:23:39', 1, 2),
+(413, 42, '2020-12-31 13:27:34', 2, 3),
+(414, 42, '2020-12-31 13:27:34', 1, 2),
+(415, 42, '2020-12-31 13:27:50', 2, 3),
+(416, 42, '2020-12-31 13:27:50', 1, 2),
+(417, 42, '2020-12-31 13:29:17', 2, 3),
+(418, 42, '2020-12-31 13:29:17', 1, 2),
+(419, 42, '2020-12-31 13:29:51', 2, 3),
+(420, 42, '2020-12-31 13:29:51', 1, 2),
+(421, 42, '2020-12-31 13:30:42', 2, 3),
+(422, 42, '2020-12-31 13:30:42', 1, 2),
+(423, 42, '2020-12-31 13:31:02', 2, 3),
+(424, 42, '2020-12-31 13:31:02', 1, 2),
+(425, 42, '2020-12-31 13:32:40', 2, 3),
+(426, 42, '2020-12-31 13:32:40', 1, 2),
+(427, 42, '2020-12-31 13:33:42', 2, 3),
+(428, 42, '2020-12-31 13:33:42', 1, 2),
+(429, 42, '2020-12-31 13:35:36', 2, 3),
+(430, 42, '2020-12-31 13:35:36', 1, 2),
+(431, 42, '2020-12-31 13:37:21', 2, 3),
+(432, 42, '2020-12-31 13:37:21', 1, 2),
+(433, 42, '2020-12-31 13:38:19', 2, 3),
+(434, 42, '2020-12-31 13:38:19', 1, 2),
+(435, 42, '2020-12-31 13:38:29', 1, 2),
+(436, 42, '2020-12-31 13:38:32', 1, 2),
+(437, 42, '2020-12-31 13:38:34', 1, 2),
+(438, 42, '2020-12-31 13:38:56', 1, 2),
+(439, 42, '2020-12-31 13:38:57', 1, 2),
+(440, 42, '2020-12-31 13:39:00', 1, 2),
+(441, 42, '2020-12-31 13:40:07', 1, 2),
+(442, 42, '2020-12-31 13:40:09', 1, 2),
+(443, 42, '2020-12-31 13:40:12', 1, 2),
+(444, 42, '2020-12-31 13:40:32', 1, 2),
+(445, 42, '2020-12-31 13:41:36', 1, 2),
+(446, 42, '2020-12-31 13:42:21', 1, 2),
+(447, 42, '2020-12-31 13:42:45', 1, 2),
+(448, 42, '2020-12-31 13:43:54', 1, 2),
+(449, 42, '2020-12-31 13:44:22', 1, 2),
+(450, 42, '2020-12-31 13:44:51', 1, 2),
+(451, 42, '2020-12-31 13:45:20', 1, 2),
+(452, 42, '2020-12-31 13:45:41', 1, 2),
+(453, 42, '2020-12-31 13:46:12', 1, 2),
+(454, 42, '2020-12-31 13:46:35', 1, 2),
+(455, 42, '2020-12-31 13:46:42', 1, 2),
+(456, 42, '2020-12-31 13:49:01', 1, 2),
+(457, 42, '2020-12-31 13:49:05', 1, 2),
+(458, 42, '2020-12-31 13:49:24', 1, 2),
+(459, 42, '2020-12-31 13:49:45', 1, 2),
+(460, 42, '2020-12-31 13:50:22', 1, 2),
+(461, 42, '2020-12-31 13:50:43', 1, 2),
+(462, 42, '2020-12-31 13:51:00', 3, 1),
+(463, 42, '2020-12-31 13:51:00', 1, 2),
+(464, 42, '2020-12-31 13:51:00', 1, 2),
+(465, 42, '2020-12-31 13:51:06', 1, 2),
+(466, 42, '2020-12-31 13:51:07', 1, 2),
+(467, 42, '2020-12-31 13:51:13', 1, 2),
+(468, 42, '2020-12-31 13:51:31', 1, 2),
+(469, 42, '2020-12-31 13:51:31', 1, 2),
+(470, 42, '2020-12-31 13:52:43', 1, 2),
+(471, 42, '2020-12-31 13:52:53', 1, 2),
+(472, 40, '2020-12-31 13:52:55', 1, 2),
+(473, 40, '2020-12-31 13:53:03', 1, 2),
+(474, 40, '2020-12-31 13:53:06', 1, 2),
+(475, 40, '2020-12-31 13:53:14', 1, 2),
+(476, 40, '2020-12-31 13:53:33', 3, 1),
+(477, 40, '2020-12-31 13:53:33', 1, 2),
+(478, 40, '2020-12-31 13:53:33', 1, 2),
+(479, 40, '2020-12-31 13:53:41', 1, 2),
+(480, 42, '2020-12-31 13:53:44', 1, 2),
+(481, 42, '2020-12-31 13:53:53', 1, 2),
+(482, 42, '2020-12-31 13:53:55', 4, 3),
+(483, 42, '2020-12-31 13:53:55', 4, 4),
+(484, 42, '2020-12-31 13:53:55', 5, 2),
+(485, 42, '2020-12-31 13:53:55', 1, 2),
+(486, 42, '2020-12-31 13:53:55', 1, 2),
+(487, 42, '2020-12-31 13:54:02', 4, 3),
+(488, 42, '2020-12-31 13:54:02', 4, 4),
+(489, 42, '2020-12-31 13:54:02', 5, 2),
+(490, 42, '2020-12-31 13:54:02', 1, 2),
+(491, 42, '2020-12-31 13:54:02', 1, 2),
+(492, 42, '2020-12-31 13:54:48', 1, 2),
+(493, 42, '2020-12-31 13:55:04', 1, 2),
+(494, 42, '2020-12-31 13:56:23', 1, 2),
+(495, 42, '2020-12-31 13:56:28', 1, 2),
+(496, 42, '2020-12-31 13:56:34', 1, 2),
+(497, 42, '2020-12-31 13:56:34', 1, 2),
+(498, 42, '2020-12-31 13:56:38', 4, 3),
+(499, 42, '2020-12-31 13:56:38', 4, 4),
+(500, 42, '2020-12-31 13:56:38', 5, 2),
+(501, 42, '2020-12-31 13:56:38', 1, 2),
+(502, 42, '2020-12-31 13:56:38', 1, 2),
+(503, 42, '2020-12-31 13:56:45', 1, 2),
+(504, 40, '2020-12-31 13:56:49', 1, 2),
+(505, 40, '2020-12-31 13:56:54', 1, 2),
+(506, 42, '2020-12-31 13:56:57', 1, 2),
+(507, 42, '2020-12-31 13:57:05', 1, 2),
+(508, 42, '2020-12-31 13:57:05', 1, 2),
+(509, 42, '2020-12-31 13:57:07', 1, 2),
+(510, 40, '2020-12-31 13:57:09', 1, 2),
+(511, 40, '2020-12-31 13:58:50', 1, 2),
+(512, 42, '2020-12-31 13:58:57', 1, 2),
+(513, 42, '2020-12-31 13:59:14', 1, 2),
+(514, 42, '2020-12-31 13:59:45', 4, 3),
+(515, 42, '2020-12-31 13:59:45', 4, 4),
+(516, 42, '2020-12-31 13:59:45', 5, 2),
+(517, 42, '2020-12-31 13:59:45', 1, 2),
+(518, 42, '2020-12-31 13:59:45', 1, 2),
+(519, 42, '2020-12-31 14:00:22', 1, 2),
+(520, 42, '2020-12-31 14:00:22', 1, 2),
+(521, 42, '2020-12-31 14:00:33', 1, 2),
+(522, 42, '2020-12-31 14:00:33', 1, 2),
+(523, 42, '2020-12-31 14:01:02', 2, 3),
+(524, 42, '2020-12-31 14:01:02', 1, 2),
+(525, 42, '2020-12-31 14:01:16', 1, 2),
+(526, 42, '2020-12-31 14:01:16', 1, 2),
+(527, 42, '2020-12-31 14:02:41', 1, 2),
+(528, 42, '2020-12-31 14:02:45', 4, 3),
+(529, 42, '2020-12-31 14:02:45', 4, 4),
+(530, 42, '2020-12-31 14:02:45', 5, 2),
+(531, 42, '2020-12-31 14:02:45', 1, 2),
+(532, 42, '2020-12-31 14:02:45', 1, 2),
+(533, 42, '2020-12-31 14:02:57', 1, 2),
+(534, 42, '2020-12-31 14:02:57', 1, 2),
+(535, 42, '2020-12-31 14:04:12', 1, 2),
+(536, 42, '2020-12-31 14:04:18', 1, 2),
+(537, 42, '2020-12-31 14:04:18', 1, 2),
+(538, 42, '2020-12-31 14:04:26', 1, 2),
+(539, 42, '2021-01-13 07:30:45', 1, 2),
+(540, 42, '2021-01-13 07:30:57', 1, 2),
+(541, 42, '2021-01-13 07:31:17', 2, 3),
+(542, 42, '2021-01-13 07:31:17', 1, 2),
+(543, 42, '2021-01-13 07:31:54', 1, 2),
+(544, 42, '2021-01-13 07:31:54', 1, 2);
+
+-- --------------------------------------------------------
+
+--
 -- Struktura tabeli dla tabeli `ips`
 --
 
@@ -39,7 +297,8 @@ CREATE TABLE `ips` (
 --
 
 INSERT INTO `ips` (`id_ips`, `ip`, `count_of_failed`, `block`) VALUES
-(10, '::1', 0, 'unlock');
+(10, '::1', 0, 'unlock'),
+(11, '127.0.0.1', 0, 'unlock');
 
 -- --------------------------------------------------------
 
@@ -227,7 +486,22 @@ INSERT INTO `logs` (`id_log`, `id_user`, `time`, `result`, `ip`) VALUES
 (180, 40, '2020-12-09 09:06:21', 'successful', '::1'),
 (181, 41, '2020-12-09 09:07:18', 'successful', '::1'),
 (182, 40, '2020-12-09 09:19:10', 'successful', '::1'),
-(183, 42, '2020-12-09 09:23:22', 'successful', '::1');
+(183, 42, '2020-12-09 09:23:22', 'successful', '::1'),
+(184, 42, '2020-12-28 19:48:18', 'successful', '::1'),
+(185, 42, '2020-12-28 20:59:02', 'successful', '127.0.0.1'),
+(186, 42, '2020-12-29 14:26:04', 'successful', '::1'),
+(187, 42, '2020-12-30 20:11:00', 'successful', '::1'),
+(188, 42, '2020-12-30 21:26:35', 'successful', '::1'),
+(189, 42, '2020-12-30 21:49:44', 'successful', '::1'),
+(190, 42, '2020-12-31 14:05:10', 'successful', '::1'),
+(191, 42, '2020-12-31 14:21:26', 'successful', '::1'),
+(192, 40, '2020-12-31 14:52:55', 'successful', '::1'),
+(193, 42, '2020-12-31 14:53:44', 'successful', '::1'),
+(194, 40, '2020-12-31 14:56:49', 'successful', '::1'),
+(195, 42, '2020-12-31 14:56:57', 'successful', '::1'),
+(196, 40, '2020-12-31 14:57:09', 'successful', '::1'),
+(197, 42, '2020-12-31 14:58:57', 'successful', '::1'),
+(198, 42, '2021-01-13 08:30:45', 'successful', '::1');
 
 -- --------------------------------------------------------
 
@@ -241,16 +515,18 @@ CREATE TABLE `password` (
   `id_user` int(11) NOT NULL,
   `web_address` varchar(256) COLLATE utf8_polish_ci NOT NULL,
   `description` varchar(256) COLLATE utf8_polish_ci NOT NULL,
-  `login` varchar(30) COLLATE utf8_polish_ci NOT NULL
+  `login` varchar(30) COLLATE utf8_polish_ci NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Zrzut danych tabeli `password`
 --
 
-INSERT INTO `password` (`id`, `password`, `id_user`, `web_address`, `description`, `login`) VALUES
-(105, '5WXHPy544clP70UeDIAE1w==', 41, 'test2.pl', 'test2.pl', 'test222'),
-(106, '5WXHPy544clP70UeDIAE1w==', 40, 'test.pl', 'test', 'testtest');
+INSERT INTO `password` (`id`, `password`, `id_user`, `web_address`, `description`, `login`, `deleted`) VALUES
+(122, 'arcUHN3Mh+vpg0x6KhHkK5HxxpoBJ9+f0o+nymn/zmM=', 42, 'admin.pl', 'admin page', 'adminLogin-updated', 0),
+(123, 'NtHeGEOxRCrpIn3cbm0ETQ==', 42, 'page.com', 'page blablabla', 'page', 0),
+(124, '5WXHPy544clP70UeDIAE1w==', 40, 'test.com', 'test desc', 'test', 0);
 
 -- --------------------------------------------------------
 
@@ -270,9 +546,7 @@ CREATE TABLE `sharing` (
 --
 
 INSERT INTO `sharing` (`id_sharing`, `id_user_giving`, `id_user_taking`, `id_password`) VALUES
-(23, 41, 42, 105),
-(24, 41, 40, 105),
-(25, 40, 42, 106);
+(26, 42, 40, 122);
 
 -- --------------------------------------------------------
 
@@ -285,21 +559,51 @@ CREATE TABLE `user` (
   `login` varchar(30) COLLATE utf8_polish_ci NOT NULL,
   `password_hash` varchar(512) COLLATE utf8_polish_ci NOT NULL,
   `salt` varchar(20) COLLATE utf8_polish_ci NOT NULL,
-  `isPasswordKeptAsHash` tinyint(1) NOT NULL
+  `isPasswordKeptAsHash` tinyint(1) NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Zrzut danych tabeli `user`
 --
 
-INSERT INTO `user` (`id`, `login`, `password_hash`, `salt`, `isPasswordKeptAsHash`) VALUES
-(40, 'Test', '795d08f0f8b31407e0e5f21a684aac039d5bf8589892f51bd8e1b75b5ac1157d2078fcbdb94d626b079eb066564a2573d6df24673aa6fe08e04fa0c67d765fdf', '21393807795f9ecce161', 1),
-(41, 'test2', 'c360d7cc0454b121bc4bd276b844090316ff7281aff1c4dc45265d643145d64180029647303513e0b44a4535f5d563e276f6ec104b77f7e0a3cf2edb1c0e901e', '8317323075f9ecd1edcc', 0),
-(42, 'admin', 'cfe8c250cbc8b99056b8f55c2eced7660fa7d82f3173f7f626a940d56847b643bcc6191ca516b0bc33a1421a65f5eb0654a38480437c7ed268eec9649b4edfb4', '11107377625fcfb870da', 1);
+INSERT INTO `user` (`id`, `login`, `password_hash`, `salt`, `isPasswordKeptAsHash`, `deleted`) VALUES
+(40, 'Test', '795d08f0f8b31407e0e5f21a684aac039d5bf8589892f51bd8e1b75b5ac1157d2078fcbdb94d626b079eb066564a2573d6df24673aa6fe08e04fa0c67d765fdf', '21393807795f9ecce161', 1, 0),
+(41, 'test2', 'c360d7cc0454b121bc4bd276b844090316ff7281aff1c4dc45265d643145d64180029647303513e0b44a4535f5d563e276f6ec104b77f7e0a3cf2edb1c0e901e', '8317323075f9ecd1edcc', 0, 0),
+(42, 'admin', 'cfe8c250cbc8b99056b8f55c2eced7660fa7d82f3173f7f626a940d56847b643bcc6191ca516b0bc33a1421a65f5eb0654a38480437c7ed268eec9649b4edfb4', '11107377625fcfb870da', 1, 0);
 
 --
 -- Indeksy dla zrzutów tabel
 --
+
+--
+-- Indeksy dla tabeli `action_type`
+--
+ALTER TABLE `action_type`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- Indeksy dla tabeli `data_change`
+--
+ALTER TABLE `data_change`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- Indeksy dla tabeli `function`
+--
+ALTER TABLE `function`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeksy dla tabeli `function_run`
+--
+ALTER TABLE `function_run`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_user` (`id_user`),
+  ADD KEY `id_function` (`id_function`),
+  ADD KEY `id_action_type` (`id_action_type`);
 
 --
 -- Indeksy dla tabeli `ips`
@@ -337,28 +641,52 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT dla tabeli `action_type`
+--
+ALTER TABLE `action_type`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT dla tabeli `data_change`
+--
+ALTER TABLE `data_change`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+
+--
+-- AUTO_INCREMENT dla tabeli `function`
+--
+ALTER TABLE `function`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT dla tabeli `function_run`
+--
+ALTER TABLE `function_run`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=545;
+
+--
 -- AUTO_INCREMENT dla tabeli `ips`
 --
 ALTER TABLE `ips`
-  MODIFY `id_ips` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_ips` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT dla tabeli `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
+  MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=199;
 
 --
 -- AUTO_INCREMENT dla tabeli `password`
 --
 ALTER TABLE `password`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
 
 --
 -- AUTO_INCREMENT dla tabeli `sharing`
 --
 ALTER TABLE `sharing`
-  MODIFY `id_sharing` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id_sharing` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT dla tabeli `user`
