@@ -10,6 +10,8 @@ class BD {
     public function __construct($server,$user,$pass,$base) {// create a handle to the database
         $this->mysqli = new mysqli($server,$user,$pass,$base);
 
+
+
         if($this->mysqli->connect_errno){
             printf("Connection to the server failed: %s\n",$this->mysqli->connect_error);// creation error
             exit();
@@ -141,7 +143,7 @@ public function showLogsOfFunctions(){
 
 
         // encrypt the password using the encryption method in the config file and the user's login. 1 means OPENSSL_ZERO_PADDING
-        $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), constant('pepper').$_SESSION['login'], 0);
+            $encryptedPassword= @openssl_encrypt($password, constant('cypherMethod'), constant('pepper').$_SESSION['login'], 0);
 
         // call the insert function to the database
         $insert_sql = 'INSERT INTO `password` (`id`, `password`, `id_user`, `web_address`, `description`,`login`,`deleted`) VALUES (NULL, "'.$encryptedPassword.'", "'.$user_Id.'", "'.$web_address.'", "'.$description.'", "'.$login.'", 0);';
